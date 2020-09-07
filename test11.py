@@ -201,7 +201,7 @@ class guioflabels:
         #list with tkinter objects, otherwise you can't copy them
         self.l5=[self.input1,self.input2,self.input3,self.input4,self.input5,self.input6,
                  self.output1,self.output2,self.output3,self.output4,self.output5,self.output6]
-        
+
         print('Das sind die label und vermutlich der grund warum es blau angezeigt wird',self.l5)
         
         #memory for how often devices were used
@@ -351,7 +351,7 @@ class guioflabels:
     def changecolor(self, widgidx, bool):          #simply changes bg color  of widg, depending on bool
         if widgidx != None:                       #this guarantees no coloring of unused devices; basically same loop in changeconnections
             widg=self.l5[widgidx]                   #get real widget object from list
-            if (str(widg)[12])=='2':
+            if widgidx>=6:                          #formerly it was if (str(widg)[12])=='2', however tkinter objects don't seem to be named to the same convention as on this deb machine
                 if bool is True:
                     widg.config(bg='green')
                 else:
