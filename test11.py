@@ -202,6 +202,8 @@ class guioflabels:
         self.l5=[self.input1,self.input2,self.input3,self.input4,self.input5,self.input6,
                  self.output1,self.output2,self.output3,self.output4,self.output5,self.output6]
         
+        print('Das sind die label und vermutlich der grund warum es blau angezeigt wird',self.l5)
+        
         #memory for how often devices were used
         self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stück, startingtime, remember if this was already counted]
                     [0,0,0,None,None],
