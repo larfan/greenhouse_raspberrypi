@@ -7,15 +7,13 @@ import time
 all try statements only are for using program on main deb machine
 '''
 
-try:                    
-    GPIO.setmode(GPIO.BCM) # normal Gpio numbers, not pin numbers
-    RELAIS_1_GPIO = 17
-    GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Modus zuweisen
-except:
-    pass
+
 
 def relais(widgidx,bool):
     try:
+        GPIO.setmode(GPIO.BCM) # normal Gpio numbers, not pin numbers
+        RELAIS_1_GPIO = 17
+        GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Modus zuweisen
         if bool==True:
             print('Geraet ein')
             if widgidx==0:
@@ -29,6 +27,7 @@ def relais(widgidx,bool):
 
 def cleanclose():
     try:
+        GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
         GPIO.cleanup()
     except:
         pass
