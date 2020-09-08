@@ -19,11 +19,11 @@ def relais(widgidx,bool):
         if bool==True:
             print('Geraet ein')
             if widgidx==0:
-                GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
+                GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
         else:
             print('geraet aus')
             if widgidx==0:
-                GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
+                GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
     except:
         pass
 
