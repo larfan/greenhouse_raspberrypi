@@ -9,7 +9,6 @@ l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[20,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
-cleanclose()
 
 class measuring:
     def __init__(self):
