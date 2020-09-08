@@ -180,7 +180,7 @@ class guioflabels:
 
 
         self.l2=[]                              #man sollte eher listen erstellen, als indirekt 'Daten' in den Variablen zu speichern
-        for i,z in enumerate(self.l1[0],0):     #das wäre in diesem Fall self.st1, self.st2, self.st3 usw., wobei 3 eine Art von Daten wäre
+        for i,z in enumerate(self.l1[0],0):     #das waere in diesem Fall self.st1, self.st2, self.st3 usw., wobei 3 eine Art von Daten waere
                                                 #this loop creates all tkinter connection labels
             self.l2.append(Label(self.frame3,text=z,width=10))
             self.l2[i].grid()   
@@ -192,7 +192,7 @@ class guioflabels:
         #predefining variables for the first run, before measuring
         self.useddevice=None
         
-        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stück,von-bis nicht]
+        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,von-bis nicht]
         #you can inhibit the use of devices, by simply setting the path to None.
         self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[17,6]]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,30,None]],           #co2
@@ -208,7 +208,7 @@ class guioflabels:
                  self.output1,self.output2,self.output3,self.output4,self.output5,self.output6]
         
         #memory for how often devices were used
-        self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stück, startingtime, remember if this was already counted]
+        self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted]
                     [0,0,0,None,None],
                     [0,0,0,None,None],
                     [None,None,None,None,None],
@@ -239,7 +239,7 @@ class guioflabels:
         self.master.after(5000)
         
         #make temp copy of self.ll
-        self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe für die self.l5 liste, die die objekte enthält
+        self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
                                                 #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
         #modify memory
         self.resetmemory('realtime',None)      
@@ -414,7 +414,7 @@ class guioflabels:
                     self.memory[index][1]+=self.seconds
                     self.memory[index][3]=None
                     self.checktime(element,index,'t/24h')   #logs at the end of device cycle(mostly when it's finally turned off), if daily uptime has been exceeded
-                    #logs t/am Stück
+                    #logs t/am Stueck
                     self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
 
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
