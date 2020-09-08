@@ -349,8 +349,7 @@ class guioflabels:
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
         except:
             try:
-                GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
-                GPIO.cleanup()
+                cleanclose()
                 print('Did you cleanup?')
             except:
                 pass
