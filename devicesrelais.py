@@ -32,5 +32,6 @@ def cleanclose():
 
         GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
         GPIO.cleanup()
+        print('gehst du hier wirklich rein?')
     except:
         pass
