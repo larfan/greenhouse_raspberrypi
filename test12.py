@@ -349,6 +349,7 @@ class guioflabels:
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
         except KeyboardInterrupt:
+            print('Ich geh hier rein!')
             cleanclose()
 
 
