@@ -19,14 +19,12 @@ relaydevicelist=[RELAIS_GPIO_pump,RELAIS_GPIO_fan,RELAIS_GPIO_growlights]
 
 def relais(widgidx,bool):
     try:
-        
-        if bool==True:
-            print('Geraet ein')
-            if widgidx==0:
+        if widgidx<=2:
+            if bool==True:
+                print('Geraet ein')
                 GPIO.output(relaydevicelist[widgidx], GPIO.HIGH)
-        else:
-            print('geraet aus')
-            if widgidx==0:
+            else:
+                print('geraet aus')
                 GPIO.output(relaydevicelist[widgidx], GPIO.LOW)
     except:
         pass
