@@ -1,8 +1,5 @@
 from tkinter import *
-try:                        #try only is for using program on main deb machine
-    from devicesrelais import relais
-except:
-    pass
+from devicesrelais import relais, cleanclose
 from datetime import datetime
 import time, random, operator, copy
 
@@ -12,6 +9,7 @@ l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[20,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
+cleanclose()
 
 class measuring:
     def __init__(self):
@@ -235,122 +233,125 @@ class guioflabels:
     
             
     def programloop(self):
-                
-        self.master.after(5000)
-        
-        #make temp copy of self.ll
-        self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
-                                                #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
-        #modify memory
-        self.resetmemory('realtime',None)      
+        try:       
+            self.master.after(5000)
             
-        
+            #make temp copy of self.ll
+            self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
+                                                    #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
+            #modify memory
+            self.resetmemory('realtime',None)      
+                
+            
 
-        for idx,element in enumerate(self.li):
-            print(l3)
+            for idx,element in enumerate(self.li):
+                print(l3)
 
-            #set hour for the whole time of correcting this device
-            self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
-            #set self.memory[4] as True, to register the use of devices
-            self.memory[idx][4]=True
+                #set hour for the whole time of correcting this device
+                self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
+                #set self.memory[4] as True, to register the use of devices
+                self.memory[idx][4]=True
 
-           #checks if device shouldn't be turned on in certain time frame
-            if element[5] is not None:           #checks if measurand correction should be affected by time
-                if element[5][3] is not None:
-                    if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
-                        print('Currently in the forbidden hours!')
-                        continue                                        #jumps to next iteration in for loop
-                    else:
-                        print('Measurand is not in the forbidden hours rn.')
-                        pass
+            #checks if device shouldn't be turned on in certain time frame
+                if element[5] is not None:           #checks if measurand correction should be affected by time
+                    if element[5][3] is not None:
+                        if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
+                            print('Currently in the forbidden hours!')
+                            continue                                        #jumps to next iteration in for loop
+                        else:
+                            print('Measurand is not in the forbidden hours rn.')
+                            pass
+                        
+
+                while values.checkintervall(element[0])!=True:
                     
+                    self.direction=element[2][values.checkintervall(element[0])]        #long expression just returns high/low dictionary, as to not have millions of loops 
+                    self.changecolor(element[1],None)                                  #color measurand as None/red           
+                    self.changecolor(self.direction[0],True)                            #color devices, both changecolor and changeconnection, have a way of ignoring the argument when its None
 
-            while values.checkintervall(element[0])!=True:
-                
-                self.direction=element[2][values.checkintervall(element[0])]        #long expression just returns high/low dictionary, as to not have millions of loops 
-                self.changecolor(element[1],None)                                  #color measurand as None/red           
-                self.changecolor(self.direction[0],True)                            #color devices, both changecolor and changeconnection, have a way of ignoring the argument when its None
+                    self.changeconnections(self.direction[1])                           #change connection-->point to 'used' devices
 
-                self.changeconnections(self.direction[1])                           #change connection-->point to 'used' devices
+                    if element[4]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
+                        self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
+                        self.memory[idx][3]=datetime.now()
+                        self.timelog(element,idx,'x/h')                              #register general use of device one time
 
-                if element[4]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
-                    self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
-                    self.memory[idx][3]=datetime.now()
-                    self.timelog(element,idx,'x/h')                              #register general use of device one time
+                        values.simulation('',element[0],self.direction[2])   
+                    else:                                                   #goes into this when the measurand can't be changed in one or even two directions
+                        self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
+                        if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
+                            self.timelog(element,idx,'x/h')                      #register general use of device one time
+                            self.memory[idx][3]=datetime.now()              #startingtime always needs to be after timelog, otherwise you measure the wrong way around
+                        else:                                               #measurand hasn't got a device to power up
+                            self.resetmemory('atthetime',idx)
 
-                    values.simulation('',element[0],self.direction[2])   
-                else:                                                   #goes into this when the measurand can't be changed in one or even two directions
-                    self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
-                    if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
-                        self.timelog(element,idx,'x/h')                      #register general use of device one time
-                        self.memory[idx][3]=datetime.now()              #startingtime always needs to be after timelog, otherwise you measure the wrong way around
-                    else:                                               #measurand hasn't got a device to power up
-                        self.resetmemory('atthetime',idx)
-
-                    self.changeconnections(self.l1[9])                  #set to no connection
-                    if values.checkintervall(element[0])=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
-                        self.changecolor(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
-                    break
-                
-                #correcting intervall
-                self.master.after(1000)                         
-
-                #add small increments of 'normally' used device, basically adds the 1000 ms from above
-                self.timelog(element,idx,'normallogging')
-                
-                #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
-                if element[5] is not None:              #only for the time sensitive
-                    if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
-                        print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
-                        #set device time of powered up device to 0
-                        self.resetmemory('atthetime',idx)
-                        #set to no connection
-                        self.changeconnections(self.l1[9])
-                        #turning off used device
-                        self.changecolor(self.useddevice,None)        
-                        self.useddevice=None
+                        self.changeconnections(self.l1[9])                  #set to no connection
+                        if values.checkintervall(element[0])=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
+                            self.changecolor(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
                         break
-                
-                
-            else:
-                #timelogging
-                self.timelog(element,idx,'normallogging')
-                
-                print(self.memory[idx],'\n')
-                #set device time of powered up device to 0
-                self.resetmemory('atthetime',idx)
+                    
+                    #correcting intervall
+                    self.master.after(1000)                         
 
-
-                #set to no connection
-                self.changeconnections(self.l1[9])          
-               
-                #coloring/turning off devices...
-                self.changecolor(element[1],True)               #color measurand as correct/green
-                self.changecolor(self.useddevice,None)         #Turn off just used device
-                self.useddevice=None                           #Forget last used device
-                
-                if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
-                    self.changecolor(element[2]['high'][0],None)
-                    self.changecolor(element[2]['low'][0],None)
-
-                            
-        #simulation
-        print('Starting with simulation!')
-        for p in range(30):
-            values.simulation('simulation',None,None)
-            for u in self.ll:
-                if values.checkintervall(u[0])==True:
-                    self.changecolor(u[1],True)
+                    #add small increments of 'normally' used device, basically adds the 1000 ms from above
+                    self.timelog(element,idx,'normallogging')
+                    
+                    #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
+                    if element[5] is not None:              #only for the time sensitive
+                        if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
+                            print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
+                            #set device time of powered up device to 0
+                            self.resetmemory('atthetime',idx)
+                            #set to no connection
+                            self.changeconnections(self.l1[9])
+                            #turning off used device
+                            self.changecolor(self.useddevice,None)        
+                            self.useddevice=None
+                            break
+                    
+                    
                 else:
-                    self.changecolor(u[1],None)
-            self.master.after(300)
+                    #timelogging
+                    self.timelog(element,idx,'normallogging')
+                    
+                    print(self.memory[idx],'\n')
+                    #set device time of powered up device to 0
+                    self.resetmemory('atthetime',idx)
 
-        print('Das ist l3 nach der Simulation: '+str(l3))
+
+                    #set to no connection
+                    self.changeconnections(self.l1[9])          
                 
-       
-       
-        self.master.after(1, self.programloop)  #trick is to call function again, at end of function
-       
+                    #coloring/turning off devices...
+                    self.changecolor(element[1],True)               #color measurand as correct/green
+                    self.changecolor(self.useddevice,None)         #Turn off just used device
+                    self.useddevice=None                           #Forget last used device
+                    
+                    if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
+                        self.changecolor(element[2]['high'][0],None)
+                        self.changecolor(element[2]['low'][0],None)
+
+                                
+            #simulation
+            print('Starting with simulation!')
+            for p in range(30):
+                values.simulation('simulation',None,None)
+                for u in self.ll:
+                    if values.checkintervall(u[0])==True:
+                        self.changecolor(u[1],True)
+                    else:
+                        self.changecolor(u[1],None)
+                self.master.after(300)
+
+            print('Das ist l3 nach der Simulation: '+str(l3))
+                    
+        
+        
+            self.master.after(1, self.programloop)  #trick is to call function again, at end of function
+        except KeyboardInterrupt:
+            cleanclose()
+
+
     def changecolor(self, widgidx, bool):          #simply changes bg color  of widg, depending on bool
         if widgidx != None:                       #this guarantees no coloring of unused devices; basically same loop in changeconnections
             widg=self.l5[widgidx]                   #get real widget object from list
