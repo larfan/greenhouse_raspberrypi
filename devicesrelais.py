@@ -6,16 +6,20 @@ import time
 '''
 all try statements only are for using program on main deb machine
 '''
-try:
-    GPIO.setmode(GPIO.BCM) # normal Gpio numbers, not pin numbers
-    RELAIS_1_GPIO = 17
-    GPIO.setup(RELAIS_1_GPIO, GPIO.OUT) # GPIO Modus zuweisen
-except:
-    pass
+
 RELAIS_GPIO_pump=26
 RELAIS_GPIO_fan=19
 RELAIS_GPIO_growlights=13
 relaydevicelist=[RELAIS_GPIO_pump,RELAIS_GPIO_fan,RELAIS_GPIO_growlights]
+
+try:
+    GPIO.setmode(GPIO.BCM) # normal Gpio numbers, not pin numbers
+    GPIO.setup(RELAIS_GPIO_pump, GPIO.OUT) # GPIO Modus zuweisen
+    GPIO.setup(RELAIS_GPIO_fan, GPIO.OUT) # GPIO Modus zuweisen
+    GPIO.setup(RELAIS_GPIO_growlights, GPIO.OUT) # GPIO Modus zuweisen
+
+except:
+    pass
 
 def relais(widgidx,bool):
     try:
