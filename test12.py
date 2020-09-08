@@ -363,10 +363,8 @@ class guioflabels:
                     widg.config(bg='red')
                 self.master.update()                    #works much better with update(), dont know why
             else:
-                try:                                 #try only is for using program on main deb machine
-                    relais(widgidx,bool)
-                except:
-                    pass
+                relais(widgidx,bool)
+                
                 if bool is True:
                     widg.config(bg='blue')
                 else:

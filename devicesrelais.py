@@ -19,17 +19,17 @@ def relais(widgidx,bool):
         if bool==True:
             print('Geraet ein')
             if widgidx==0:
-                GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
+                GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
         else:
             print('geraet aus')
             if widgidx==0:
-                GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
+                GPIO.output(RELAIS_1_GPIO, GPIO.HIGH)
     except:
         pass
 
 def cleanclose():
     print('hi')
-    try:
+    try:                                                                        #try only is for using program on main deb machine
         print('Ich geh hier rein!')
 
         GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
