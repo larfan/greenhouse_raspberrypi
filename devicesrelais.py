@@ -23,11 +23,11 @@ def relais(widgidx,bool):
         if bool==True:
             print('Geraet ein')
             if widgidx==0:
-                GPIO.output(17, GPIO.HIGH)
+                GPIO.output(relaydevicelist[widgidx], GPIO.HIGH)
         else:
             print('geraet aus')
             if widgidx==0:
-                GPIO.output(17, GPIO.LOW)
+                GPIO.output(relaydevicelist[widgidx], GPIO.LOW)
     except:
         pass
 
@@ -36,7 +36,7 @@ def cleanclose():
     try:                                                                        #try only is for using program on main deb machine
         print('Ich geh hier rein!')
 
-        GPIO.output(17, GPIO.LOW)
+        GPIO.output(relaydevicelist, GPIO.LOW)
         GPIO.cleanup()
         print('gehst du hier wirklich rein?')
     except:
