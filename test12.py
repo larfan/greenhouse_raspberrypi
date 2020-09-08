@@ -9,6 +9,7 @@ l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[20,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
+cleanclose()
 
 class measuring:
     def __init__(self):
@@ -348,11 +349,9 @@ class guioflabels:
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
         except:
-            try:
-                cleanclose()
-                print('Did you cleanup?')
-            except:
-                pass
+            cleanclose()
+            print('Did you cleanup?')
+            
 
 
     def changecolor(self, widgidx, bool):          #simply changes bg color  of widg, depending on bool

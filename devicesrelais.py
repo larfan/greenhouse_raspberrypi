@@ -26,7 +26,10 @@ def relais(widgidx,bool):
         pass
 
 def cleanclose():
+    print('hi')
     try:
+        print('Ich geh hier rein!')
+
         GPIO.output(RELAIS_1_GPIO, GPIO.LOW)
         GPIO.cleanup()
     except:
