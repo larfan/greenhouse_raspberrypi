@@ -236,7 +236,7 @@ class guioflabels:
         try:  
             
             temperature,pressure,humidity = readBME280All()
-            print(temperature,print,humidity)
+            print(temperature,pressure,humidity)
 
             self.master.after(5000)
             
