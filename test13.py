@@ -51,9 +51,13 @@ class measuring:
             return True
 
     def BMP280(self):
-        temperature,pressure,humidity = readBME280All()
-        l3[3]=temperature
-        l3[4]=humidity
+        try:
+            temperature,pressure,humidity = readBME280All()
+            l3[3]=temperature
+            l3[4]=humidity
+        except OSError:
+            print('BMP280 scheint nicht verbunden')
+            pass
 
 
 values=measuring()
