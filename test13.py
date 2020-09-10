@@ -36,8 +36,11 @@ class measuring:
             l3[measurand]=self.ops[op](l3[measurand],self.incr)
 
     def checkintervall(self,measurand):
-        if measurand==4 or 3:
-            self.BMP280()
+        '''
+        Derweil wird in Checkintervall noch nicht neu gemessen, da ja noch keine Gerät installiert sind
+        '''
+        #if measurand==4 or 3:
+        #    self.BMP280()
         self.check=l3[measurand]-l4[measurand]
         if abs(self.check) >=2:
             if self.check < 0:                           #<0 measruand too low
