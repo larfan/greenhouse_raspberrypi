@@ -7,9 +7,9 @@ import time
 all try statements only are for using program on main deb machine
 '''
 
-RELAIS_GPIO_pump=26
+RELAIS_GPIO_pump=13
 RELAIS_GPIO_fan=19
-RELAIS_GPIO_growlights=13
+RELAIS_GPIO_growlights=26
 relaydevicelist=[RELAIS_GPIO_pump,RELAIS_GPIO_fan,RELAIS_GPIO_growlights]
 
 try:
