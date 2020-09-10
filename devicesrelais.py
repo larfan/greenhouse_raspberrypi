@@ -26,10 +26,10 @@ def relais(widgidx,bool):
         if widgidx<=2:
             if bool==True:
                 print('Geraet ein')
-                GPIO.output(relaydevicelist[widgidx], GPIO.HIGH)
+                GPIO.output(relaydevicelist[widgidx], GPIO.LOW)
             else:
                 print('geraet aus')
-                GPIO.output(relaydevicelist[widgidx], GPIO.LOW)
+                GPIO.output(relaydevicelist[widgidx], GPIO.HIGH)
     except:
         pass
 
