@@ -23,10 +23,10 @@ class measuring:
                                                         #measurand tells which of list should be specifically altered
             #general environment simulation
             for ind, decrease in enumerate(l3[:2]):
-                l3[ind]=decrease-0.1
+                l3[ind]=decrease-1
                
             #lightintensity simulation
-            l3[2]+=random.uniform(-1,1)
+            l3[2]+=random.uniform(-2,2)
 
             #no simulation needed anymore
             self.BMP280()
@@ -354,14 +354,14 @@ class guioflabels:
                                 
             #simulation
             print('Starting with simulation!')
-            for p in range(30):
+            for p in range(5):
                 values.simulation('simulation',None,None)
                 for u in self.ll:
                     if values.checkintervall(u[0])==True:
                         self.changecolor(u[1],True)
                     else:
                         self.changecolor(u[1],None)
-                self.master.after(300)
+                self.master.after(5000)
 
             print('Das ist l3 nach der Simulation: '+str(l3))
                     
