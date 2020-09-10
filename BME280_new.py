@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #--------------------------------------
 #    ___  ___  _ ____
 #   / _ \/ _ \(_) __/__  __ __
@@ -18,7 +17,10 @@
 # https://www.raspberrypi-spy.co.uk/
 #
 #--------------------------------------
-import smbus
+try:
+  import smbus
+except:
+  pass
 import time
 from ctypes import c_short
 from ctypes import c_byte

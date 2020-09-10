@@ -234,10 +234,10 @@ class guioflabels:
             
     def programloop(self):
         try:  
-            try:
-                temperature,pressure,humidity = readBME280All()
-            except:
-                pass    
+            
+            temperature,pressure,humidity = readBME280All()
+            print(temperature,print,humidity)
+
             self.master.after(5000)
             
             #make temp copy of self.ll
