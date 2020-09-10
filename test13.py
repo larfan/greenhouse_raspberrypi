@@ -25,13 +25,19 @@ class measuring:
             for ind, decrease in enumerate(l3[:2]):
                 l3[ind]=decrease-0.1
                
-            for dex,rando in enumerate(l3[2:],2):
-                l3[dex]=rando+random.uniform(-1,1)
+            #lightintensity simulation
+            l3[2]+=random.uniform(-1,1)
+
+            #no simulation needed anymore
+            self.BMP280()
+
         else:
             self.incr=1                             
             l3[measurand]=self.ops[op](l3[measurand],self.incr)
 
     def checkintervall(self,measurand):
+        if measurand==4 or 3:
+            self.BMP280()
         self.check=l3[measurand]-l4[measurand]
         if abs(self.check) >=2:
             if self.check < 0:                           #<0 measruand too low
@@ -40,6 +46,12 @@ class measuring:
                 return 'high'
         else:
             return True
+
+    def BMP280(self):
+        temperature,pressure,humidity = readBME280All()
+        l3[3]=temperature
+        l3[4]=humidity
+
 
 values=measuring()
 
@@ -234,9 +246,6 @@ class guioflabels:
             
     def programloop(self):
         try:  
-            
-            temperature,pressure,humidity = readBME280All()
-            print(temperature,pressure,humidity)
 
             self.master.after(5000)
             
