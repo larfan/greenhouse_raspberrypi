@@ -449,8 +449,8 @@ class guioflabels:
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][0] is not None:
                     if self.memory[index][0]>=element[5][0]:
-                        print('Limit of',str(element[5][0]),'times powering this device per hour, has been exceeded')
-                        file1.write('Limit of '+(element[5][0])+' times powering this device per hour, has been exceeded!\n')
+                        print('Limit of',element[5][0],'times powering this device per hour, has been exceeded')
+                        file1.write('Limit of '+str(element[5][0])+' times powering this device per hour, has been exceeded!\n')
         
         if argument=='t/24h':
             if element[5] is not None:          #checks if measurand correction should even be affected by time
