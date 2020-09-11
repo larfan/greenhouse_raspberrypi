@@ -341,6 +341,7 @@ class guioflabels:
                     
                 else:
                     #timelogging
+                    print('is this the only time you print this?')
                     self.timelog(element,idx,'normallogging')
                     
                     print(self.memory[idx],'\n')
