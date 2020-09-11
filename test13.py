@@ -359,9 +359,9 @@ class guioflabels:
                         self.changecolor(u[1],None)
                 self.master.after(5000)
 
-            file1.write('Start einer neuen Runde um')
+            file1.write('Start einer neuen Runde um',datetime.now().strftime("%H:%M:%S"),'\n')
             print('Das ist l3 nach der Simulation: '+str(l3))
-            file1.write('Das ist l3 nach der Simulation: '+str(l3))
+            file1.write('Das ist l3 nach der Simulation: ',str(l3),'\n')
         
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
