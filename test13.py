@@ -26,7 +26,7 @@ class measuring:
                 l3[ind]=decrease-1
                
             #lightintensity simulation
-            l3[2]+=random.uniform(-2,2)
+            l3[2]+=random.uniform(-2,0)
 
             #no simulation needed anymore
             self.BMP280()
@@ -285,7 +285,7 @@ class guioflabels:
                         else:
                             if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
                                 print('Currently in the forbidden hours!')
-                                continue                                        #jumps to next iteration in for loop
+                                continue                                         #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
                                 pass

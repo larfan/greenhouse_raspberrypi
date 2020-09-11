@@ -17,7 +17,7 @@ try:
     GPIO.setup(RELAIS_GPIO_pump, GPIO.OUT) # GPIO Modus zuweisen
     GPIO.setup(RELAIS_GPIO_fan, GPIO.OUT) # GPIO Modus zuweisen
     GPIO.setup(RELAIS_GPIO_growlights, GPIO.OUT) # GPIO Modus zuweisen
-    for device in relaydevicelist:
+    for device in relaydevicelist:          #set Gpios to high, as to close relays
         GPIO.output(device,GPIO.HIGH)
 
 except:
