@@ -7,7 +7,7 @@ import time
 all try statements only are for using program on main deb machine
 '''
 
-RELAIS_GPIO_pump=13
+RELAIS_GPIO_pump=6
 RELAIS_GPIO_fan=19
 RELAIS_GPIO_growlights=26
 relaydevicelist=[RELAIS_GPIO_pump,RELAIS_GPIO_fan,RELAIS_GPIO_growlights]
@@ -17,6 +17,8 @@ try:
     GPIO.setup(RELAIS_GPIO_pump, GPIO.OUT) # GPIO Modus zuweisen
     GPIO.setup(RELAIS_GPIO_fan, GPIO.OUT) # GPIO Modus zuweisen
     GPIO.setup(RELAIS_GPIO_growlights, GPIO.OUT) # GPIO Modus zuweisen
+    for device in relaydevicelist:
+        GPIO.output(device,GPIO.HIGH)
 
 except:
     pass
