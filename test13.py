@@ -324,6 +324,7 @@ class guioflabels:
 
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
+                    print(self.memory[idx])
                     
                     #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
                     if element[5] is not None:              #only for the time sensitive
