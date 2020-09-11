@@ -13,7 +13,7 @@ intervall=[2,2,2,2,2]
 #opening file for logging purposes
 file1=open("logfile.txt","w")
 file1.write('Hello \n')
-file1.close()
+
 class measuring:
     def __init__(self):
         pass
@@ -366,6 +366,7 @@ class guioflabels:
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
         except:
+            file1.close()
             cleanclose()
             print('Did you cleanup?')
             
