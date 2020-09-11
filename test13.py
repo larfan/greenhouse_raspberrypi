@@ -211,8 +211,8 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,von-bis nicht]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[1,None,10,[0,6]]],         #soilhumidity
-                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[1,None,30,None]],           #co2
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[1,None,1,[0,6]]],         #soilhumidity
+                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[1,None,3,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6]]],   #lightintensity
                     [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,None],                     #temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
@@ -272,24 +272,7 @@ class guioflabels:
                 #set self.memory[4] as True, to register the use of devices
                 self.memory[idx][4]=True
 
-            #checks if device shouldn't be turned on in certain time frame
-                if element[5] is not None:           #checks if measurand correction should be affected by time
-                    if element[5][3] is not None:
-                        if element[5][3][0]<element[5][3][1]:
-                            if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
-                                print('Currently in the forbidden hours!')
-                                continue                                        #jumps to next iteration in for loop
-                            else:
-                                print('Measurand is not in the forbidden hours rn.')
-                                pass
-                        else:
-                            if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
-                                print('Currently in the forbidden hours!')
-                                continue                                         #jumps to next iteration in for loop
-                            else:
-                                print('Measurand is not in the forbidden hours rn.')
-                                pass
-                        
+            #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
                 while values.checkintervall(element[0])!=True:
@@ -324,7 +307,6 @@ class guioflabels:
 
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
-                    print(self.memory[idx])
                     
                     #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
                     if element[5] is not None:              #only for the time sensitive
@@ -446,7 +428,7 @@ class guioflabels:
                     self.memory[index][1]+=self.seconds
                     self.memory[index][3]=None
                     self.checktime(element,index,'t/24h')   #logs at the end of device cycle(mostly when it's finally turned off), if daily uptime has been exceeded
-                    #logs t/am Stueck
+                    #logs t/atthetime
                     self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
 
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
@@ -457,8 +439,7 @@ class guioflabels:
                     self.checktime(element,index,'x/h')
 
     def checktime(self,element,index,argument):
-        print('du muesstest hier jedes mal reingehen')
-        if argument=='x/h':
+        if argument=='x/h':                     #goes here only 1 time, because when it's called in timelog(argument=x/h) above, self memory[index][4] gets set to None, which means that the use of the device has been counted 
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][0] is not None:
                     if self.memory[index][0]>=element[5][0]:
