@@ -346,7 +346,9 @@ class guioflabels:
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
 
-                                
+            file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
+            file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory))
+                    
             #simulation
             print('Starting with simulation!')
             for p in range(5):
