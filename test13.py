@@ -290,7 +290,8 @@ class guioflabels:
                                 print('Measurand is not in the forbidden hours rn.')
                                 pass
                         
-
+                if self.checktime(element,idx,'timeframe')=='continue':
+                    continue
                 while values.checkintervall(element[0])!=True:
                     
                     self.direction=element[2][values.checkintervall(element[0])]        #long expression just returns high/low dictionary, as to not have millions of loops 
@@ -465,7 +466,25 @@ class guioflabels:
                 if element[5][1] is not None:
                     if self.memory[index][1]>=element[5][1]:
                         print('The ',element[5][1],'seconds, of allowed daily uptime for this device, has been exceeded')
-                    
+
+        #checks if device shouldn't be turned on in certain time frame
+        if argument=='timeframe':
+            if element[5] is not None:           #checks if measurand correction should be affected by time
+                    if element[5][3] is not None:
+                        if element[5][3][0]<element[5][3][1]:
+                            if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
+                                print('Currently in the forbidden hours!')
+                                return 'continue'                                        #jumps to next iteration in for loop
+                            else:
+                                print('Measurand is not in the forbidden hours rn.')
+                                pass
+                        else:
+                            if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:       #difference to if in upper if loop is the or instead of and
+                                print('Currently in the forbidden hours!')
+                                return 'continue'                                         #jumps to next iteration in for loop
+                            else:
+                                print('Measurand is not in the forbidden hours rn.')
+                                pass      
                     
                   
 
