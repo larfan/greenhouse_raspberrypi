@@ -275,12 +275,20 @@ class guioflabels:
             #checks if device shouldn't be turned on in certain time frame
                 if element[5] is not None:           #checks if measurand correction should be affected by time
                     if element[5][3] is not None:
-                        if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
-                            print('Currently in the forbidden hours!')
-                            continue                                        #jumps to next iteration in for loop
+                        if element[5][3][0]<element[5][3][1]:
+                            if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
+                                print('Currently in the forbidden hours!')
+                                continue                                        #jumps to next iteration in for loop
+                            else:
+                                print('Measurand is not in the forbidden hours rn.')
+                                pass
                         else:
-                            print('Measurand is not in the forbidden hours rn.')
-                            pass
+                            if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:
+                                print('Currently in the forbidden hours!')
+                                continue                                        #jumps to next iteration in for loop
+                            else:
+                                print('Measurand is not in the forbidden hours rn.')
+                                pass
                         
 
                 while values.checkintervall(element[0])!=True:
