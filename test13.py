@@ -12,7 +12,7 @@ intervall=[2,2,2,2,2]
 
 #opening file for logging purposes
 file1=open("logfile.txt","a")
-file1.write('COMPLETE NEW STARR\n')
+file1.write('\n\n\nCOMPLETE NEW START\n')
 
 class measuring:
     def __init__(self):
