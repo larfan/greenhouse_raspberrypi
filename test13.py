@@ -13,7 +13,7 @@ intervall=[2,2,2,2,2]
 #opening file for logging purposes
 file1=open("logfile.txt","w")
 file1.write('Hello \n')
-
+file1.close()
 class measuring:
     def __init__(self):
         pass
