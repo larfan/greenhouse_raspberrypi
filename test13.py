@@ -11,8 +11,8 @@ l4=[20,20,20,20,20]
 intervall=[2,2,2,2,2]
 
 #opening file for logging purposes
-file1=open("logfile.txt","w")
-file1.write('Hello \n')
+file1=open("logfile.txt","a")
+file1.write('COMPLETE NEW STARR\n')
 
 class measuring:
     def __init__(self):
@@ -29,7 +29,7 @@ class measuring:
                 l3[ind]=decrease-1
                
             #lightintensity simulation
-            l3[2]+=random.uniform(-2,0)
+            l3[2]+=random.uniform(-2,2)
 
             #no simulation needed anymore
             self.BMP280()
