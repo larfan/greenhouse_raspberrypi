@@ -327,7 +327,6 @@ class guioflabels:
                     
                 else:
                     #timelogging
-                    print('is this the only time you print this?')
                     self.timelog(element,idx,'normallogging')
                     
                     print(self.memory[idx],'\n')
@@ -411,7 +410,7 @@ class guioflabels:
 
             
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
-                print('gehst du hier rein?')
+                file1.write('Reset of hourly memory!\n')
                 self.memory[0][0]=0
                 self.memory[1][0]=0
                 self.memory[2][0]=0
@@ -449,13 +448,14 @@ class guioflabels:
                 if element[5][0] is not None:
                     if self.memory[index][0]>=element[5][0]:
                         print('Limit of',element[5][0],'times powering this device per hour, has been exceeded')
+                        file1.write('Limit of',element[5][0],'times powering this device per hour, has been exceeded!\n')
         
         if argument=='t/24h':
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][1] is not None:
                     if self.memory[index][1]>=element[5][1]:
                         print('The ',element[5][1],'seconds, of allowed daily uptime for this device, has been exceeded')
-
+                        file1.write('The ',element[5][1],'seconds, of allowed daily uptime for this device, has been exceeded!\n')
         #checks if device shouldn't be turned on in certain time frame
         if argument=='timeframe':
             if element[5] is not None:           #checks if measurand correction should be affected by time
@@ -463,6 +463,7 @@ class guioflabels:
                         if element[5][3][0]<element[5][3][1]:
                             if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
                                 print('Currently in the forbidden hours!')
+                                file1.write('Currently in the forbidden hours!\n')
                                 return 'continue'                                        #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
@@ -470,6 +471,7 @@ class guioflabels:
                         else:
                             if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:       #difference to if in upper if loop is the or instead of and
                                 print('Currently in the forbidden hours!')
+                                file1.write('Currently in the forbidden hours!\n')
                                 return 'continue'                                         #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
