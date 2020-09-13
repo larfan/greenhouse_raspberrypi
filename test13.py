@@ -212,12 +212,12 @@ class guioflabels:
         #predefining variables for the first run, before measuring
         self.useddevice=None
         
-        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,von-bis nicht]
+        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6]]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[2,10]]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6]]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,None],                     #temperature
+                    [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[2,10]]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -228,7 +228,7 @@ class guioflabels:
                  self.output1,self.output2,self.output3,self.output4,self.output5,self.output6]
         
         #memory for how often devices were used
-        self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted]
+        self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices]
                     [0,0,0,None,None],
                     [0,0,0,None,None],
                     [None,None,None,None,None],
@@ -477,9 +477,17 @@ class guioflabels:
                                 return 'continue'                                         #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
-                                pass      
-                    
-                  
+                                pass   
+        '''   
+        checks if turning on certain devices, after one hour, if x/h is >certain value(element[5][4][0) is required
+        should alway be initiated by measurand 'using' the device as the last one in for loop. i.e both co2 and temp use the fan, 
+        temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
+        '''
+        if argument=='time-devices':
+            if element[5] is not None:
+                if element[5][4] is not None:
+                    if self.memory[index][0]<=element[5][4][0]:
+                        pass
 
 
 window=Tk()
