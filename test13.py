@@ -274,7 +274,7 @@ class guioflabels:
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
                 #set self.memory[4] as True, to register the use of devices
                 self.memory[idx][4]=True
-
+                print('Stürzt du vor while ab', element[0])
             #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
