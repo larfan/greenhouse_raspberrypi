@@ -215,7 +215,7 @@ class guioflabels:
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device ]]
         #you can inhibit the use of devices, by simply setting the path to None.
         self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[2,10,None]]],         #soilhumidity
-                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None]],           #co2
+                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
                     [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[2,10,1]]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
@@ -348,10 +348,9 @@ class guioflabels:
                         self.changecolor(element[2]['low'][0],None)
                 #just for testing code
                 self.checktime(element,idx,'time-devices')
-                if element[5] is not None:
-                    print('is not NOne')
-                else:
-                    print('None')
+                
+
+
             file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
             file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory)+'\n')
                     
@@ -448,7 +447,7 @@ class guioflabels:
                     if self.memory[index][2] is not None:       #needed to not cause errors if logging this is not required
                         self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
-                if self.memory[index][4] is not None and self.memory[index][0] is not None: #las part needed to not cause errors if logging this is not required
+                if self.memory[index][4] is not None and self.memory[index][0] is not None: #last part needed to not cause errors if logging this is not required
                     self.memory[index][0]+=1
                     self.memory[index][4]=None   
                     #check if limit has been exceeded
@@ -507,7 +506,8 @@ class guioflabels:
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.memory[index][0]<=element[5][4][0]:
                         pass
-
+                else:
+                    print('tihs means ')
 
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
