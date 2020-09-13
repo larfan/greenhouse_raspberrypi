@@ -6,7 +6,7 @@ import time, random, operator, copy
 
 
 #starting/ideal values for measuring constants
-l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l3=[20,200,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[20,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
@@ -488,7 +488,7 @@ class guioflabels:
                                 print('Measurand is not in the forbidden hours rn.')
                                 pass   
         '''   
-        checks if turning on certain devices, after one hour, if x/h is >certain value(element[5][4][0) is required
+        checks if turning on certain devices, after one hour, if x/h is <certain value(element[5][4][0) is required
         should alway be initiated by measurand 'using' the device as the last one in for loop. i.e both co2 and temp use the fan, 
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
