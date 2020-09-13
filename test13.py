@@ -316,16 +316,17 @@ class guioflabels:
                     print('stürzt du vor aththetime ab?',element[0])
                     #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
                     if element[5] is not None:              #only for the time sensitive
-                        if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
-                            print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
-                            #set device time of powered up device to 0
-                            self.resetmemory('atthetime',idx)
-                            #set to no connection
-                            self.changeconnections(self.l1[9])
-                            #turning off used device
-                            self.changecolor(self.useddevice,None)        
-                            self.useddevice=None
-                            break
+                        if self.memory[idx][2] and element[5][2] is not None:               #needed to not cause errors when there is no atthetime function needed for measurand
+                            if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
+                                print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
+                                #set device time of powered up device to 0
+                                self.resetmemory('atthetime',idx)
+                                #set to no connection
+                                self.changeconnections(self.l1[9])
+                                #turning off used device
+                                self.changecolor(self.useddevice,None)        
+                                self.useddevice=None
+                                break
                     
                     
                 else:
@@ -438,16 +439,16 @@ class guioflabels:
                 self.seconds=self.timedelta.total_seconds()
                 if argument =='normallogging':             
                     #logs  t/24h
-                    if self.memory[index][1] is not None:
+                    if self.memory[index][1] is not None:   #needed to not cause errors if logging this is not required     
                         self.memory[index][1]+=self.seconds
                         self.memory[index][3]=None
                         self.checktime(element,index,'t/24h')   #logs at the end of device cycle(mostly when it's finally turned off), if daily uptime has been exceeded
                     #logs t/atthetime
-                    if self.memory[index][2] is not None:
+                    if self.memory[index][2] is not None:       #needed to not cause errors if logging this is not required
                         self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
             print('stürzt du nach normallogging ab?',element[0])
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
-                if self.memory[index][4] is not None and self.memory[index][0] is not None:
+                if self.memory[index][4] is not None and self.memory[index][0] is not None: #las part needed to not cause errors if logging this is not required
                     self.memory[index][0]+=1
                     self.memory[index][4]=None   
                     #check if limit has been exceeded
