@@ -438,14 +438,16 @@ class guioflabels:
                 self.seconds=self.timedelta.total_seconds()
                 if argument =='normallogging':             
                     #logs  t/24h
-                    self.memory[index][1]+=self.seconds
-                    self.memory[index][3]=None
-                    self.checktime(element,index,'t/24h')   #logs at the end of device cycle(mostly when it's finally turned off), if daily uptime has been exceeded
+                    if self.memory[index][1] is not None:
+                        self.memory[index][1]+=self.seconds
+                        self.memory[index][3]=None
+                        self.checktime(element,index,'t/24h')   #logs at the end of device cycle(mostly when it's finally turned off), if daily uptime has been exceeded
                     #logs t/atthetime
-                    self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
-
+                    if self.memory[index][2] is not None:
+                        self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
+            print('stürzt du nach normallogging ab?',element[0])
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
-                if self.memory[index][4] is not None:
+                if self.memory[index][4] is not None and self.memory[index][0] is not None:
                     self.memory[index][0]+=1
                     self.memory[index][4]=None   
                     #check if limit has been exceeded
