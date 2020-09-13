@@ -36,12 +36,11 @@ def relais(widgidx,bool):
         pass
 
 def cleanclose():
-    print('hi')
     try:                                                                        #try only is for using program on main deb machine
-        print('Ich geh hier rein!')
+       
 
         GPIO.output(relaydevicelist, GPIO.LOW)
         GPIO.cleanup()
-        print('gehst du hier wirklich rein?')
+        print('CLEAN CLOSE!')
     except:
         pass
