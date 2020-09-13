@@ -212,12 +212,12 @@ class guioflabels:
         #predefining variables for the first run, before measuring
         self.useddevice=None
         
-        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration ]]
+        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[2,10]]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[2,10,None]]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[2,10]]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[2,10,1]]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -350,6 +350,9 @@ class guioflabels:
             file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
             file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory)+'\n')
                     
+            #just for testing code
+            self.checktime(element,idx,'time-devices')
+
             #simulation
             print('Starting with simulation!')
             for p in range(5):
@@ -489,7 +492,11 @@ class guioflabels:
         '''
         if argument=='time-devices':
             if element[5] is not None:
-                if element[5][4] is not None:
+                if element[5][4] is not None:       #this ensures the reasoning from above
+                    self.totaluses=self.memory[index][0]
+                    if element[5][4][2] is not None:
+                        self.totaluses+=self.memory[index][element[5][4][2]]    #add uses of device, when not only used by one measurand
+                        print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.memory[index][0]<=element[5][4][0]:
                         pass
 
