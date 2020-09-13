@@ -346,12 +346,15 @@ class guioflabels:
                     if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
-
+                #just for testing code
+                self.checktime(element,idx,'time-devices')
+                if element[5] is not None:
+                    print('is not NOne')
+                else:
+                    print('None')
             file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
             file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory)+'\n')
                     
-            #just for testing code
-            self.checktime(element,idx,'time-devices')
 
             #simulation
             print('Starting with simulation!')
