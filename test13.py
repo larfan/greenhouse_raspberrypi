@@ -231,7 +231,7 @@ class guioflabels:
         self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices]
                     [0,0,0,None,None],
                     [0,0,0,None,None],
-                    [None,None,None,None,None],
+                    [0,None,None,None,None],
                     [None,None,None,None,None],
                     [None,None,None,None,None]
                     ]
@@ -416,6 +416,8 @@ class guioflabels:
                 self.memory[0][0]=0
                 self.memory[1][0]=0
                 self.memory[2][0]=0
+                self.memory[3][0]=0
+
                 self.start=int(datetime.now().strftime('%H'))
 
 
