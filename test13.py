@@ -291,7 +291,8 @@ class guioflabels:
                         self.memory[idx][3]=datetime.now()
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
 
-                        values.simulation('',element[0],self.direction[2])   
+                        values.simulation('',element[0],self.direction[2])  
+                        print('stürzt du nach der ersten korrektur ab', element[0]) 
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
