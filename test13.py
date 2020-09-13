@@ -309,6 +309,7 @@ class guioflabels:
                     #correcting intervall
                     self.master.after(1000)                         
 
+                    print('stürzt du vor logging ab?',element[0])
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
                     
