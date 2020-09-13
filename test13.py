@@ -431,6 +431,7 @@ class guioflabels:
 
     def timelog(self,element,index,argument):
         if element[5]!=None:                        #check if logging times is even necessary
+            print('stürzt du hier ab', element[0])
             if self.memory[index][3] is not None:   #check if it hasn't been already added/the function been called
                 self.endingtime=datetime.now()
                 self.timedelta=self.endingtime-self.memory[index][3]
