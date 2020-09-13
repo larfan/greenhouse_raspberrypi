@@ -274,7 +274,6 @@ class guioflabels:
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
                 #set self.memory[4] as True, to register the use of devices
                 self.memory[idx][4]=True
-                print('Stürzt du vor while ab', element[0])
             #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
@@ -292,7 +291,7 @@ class guioflabels:
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
 
                         values.simulation('',element[0],self.direction[2])  
-                        print('stürzt du nach der ersten korrektur ab', element[0]) 
+
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
@@ -309,11 +308,9 @@ class guioflabels:
                     #correcting intervall
                     self.master.after(1000)                         
 
-                    print('stürzt du vor logging ab?',element[0])
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
                     
-                    print('stürzt du vor aththetime ab?',element[0])
                     #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
                     if element[5] is not None:              #only for the time sensitive
                         if self.memory[idx][2] and element[5][2] is not None:               #needed to not cause errors when there is no atthetime function needed for measurand
@@ -331,7 +328,6 @@ class guioflabels:
                     
                 else:
                     #timelogging
-                    print('stürzt du da bei logging ab?',element[0])
                     self.timelog(element,idx,'normallogging')
                     
                     print(self.memory[idx],'\n')
@@ -432,7 +428,6 @@ class guioflabels:
 
     def timelog(self,element,index,argument):
         if element[5]!=None:                        #check if logging times is even necessary
-            print('stürzt du hier ab', element[0])
             if self.memory[index][3] is not None:   #check if it hasn't been already added/the function been called
                 self.endingtime=datetime.now()
                 self.timedelta=self.endingtime-self.memory[index][3]
@@ -446,7 +441,6 @@ class guioflabels:
                     #logs t/atthetime
                     if self.memory[index][2] is not None:       #needed to not cause errors if logging this is not required
                         self.memory[index][2]+=self.seconds     #this sits here, in this loop, because it also only needs real device-on times added to it
-            print('stürzt du nach normallogging ab?',element[0])
             if argument =='x/h':                 #logs how often device is turned on, because of this measurand/h
                 if self.memory[index][4] is not None and self.memory[index][0] is not None: #las part needed to not cause errors if logging this is not required
                     self.memory[index][0]+=1
