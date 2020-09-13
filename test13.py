@@ -491,8 +491,13 @@ class guioflabels:
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
         if argument=='time-devices':
+            print('1gehst du hier rein?')
             if element[5] is not None:
+                print('2gehst du hier rein?')
+
                 if element[5][4] is not None:       #this ensures the reasoning from above
+                    print('3gehst du hier rein?')
+
                     self.totaluses=self.memory[index][0]
                     if element[5][4][2] is not None:
                         self.totaluses+=self.memory[index][element[5][4][2]]    #add uses of device, when not only used by one measurand
