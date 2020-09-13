@@ -329,6 +329,7 @@ class guioflabels:
                     
                 else:
                     #timelogging
+                    print('stürzt du da bei logging ab?',element[0])
                     self.timelog(element,idx,'normallogging')
                     
                     print(self.memory[idx],'\n')
