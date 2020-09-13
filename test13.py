@@ -6,7 +6,7 @@ import time, random, operator, copy
 
 
 #starting/ideal values for measuring constants
-l3=[20,200,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[20,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
@@ -214,10 +214,10 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[2,10,None]]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None]]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[2,10,1]]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,10,1]]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -423,6 +423,8 @@ class guioflabels:
                 self.memory[1][0]=0
                 self.memory[2][0]=0
                 self.memory[3][0]=0
+                '''kinda bodgy but checking if device has been executed enough for the last hour is here
+                ,because in this if clause the hour gets already checked properly'''
 
                 self.start=int(datetime.now().strftime('%H'))
 
@@ -492,26 +494,17 @@ class guioflabels:
         should alway be initiated by measurand 'using' the device as the last one in for loop. i.e both co2 and temp use the fan, 
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
-        if argument=='time-devices':
-            print('1gehst du hier rein?')
+        if argument=='time-devices':                #gets executed in resetmemory, because structure for checking hour already exists there
             if element[5] is not None:
-                print('2gehst du hier rein?')
-
                 if element[5][4] is not None:       #this ensures the reasoning from above
-                    print('3gehst du hier rein?')
-
                     self.totaluses=self.memory[index][0]
-                    print('3.5gehst dur hier rein')
-                    if element[5][4][2] is not None:
-                        print('3.6gehst dur hier rein')
-                        self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
-                        print('3.7gehst dur hier rein')
-                        print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
-                    if self.memory[index][0]<=element[5][4][0]:
-                        pass
-                else:
-                    print('tihs means ')
 
+                    if element[5][4][2] is not None:
+                        self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
+                        print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
+                    if self.totaluses<=element[5][4][0]:
+                        print('While still testing, this should be displayed numerous times')
+               
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
