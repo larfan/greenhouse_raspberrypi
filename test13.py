@@ -311,6 +311,7 @@ class guioflabels:
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
                     
+                    print('stürzt du vor aththetime ab?',element[0])
                     #exit if t/atthetime is exceeded    (contains bascially most code from the else below)
                     if element[5] is not None:              #only for the time sensitive
                         if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
