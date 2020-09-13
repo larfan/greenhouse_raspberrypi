@@ -501,6 +501,7 @@ class guioflabels:
                     print('3gehst du hier rein?')
 
                     self.totaluses=self.memory[index][0]
+                    print('3.5gehst dur hier rein')
                     if element[5][4][2] is not None:
                         self.totaluses+=self.memory[index][element[5][4][2]]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
