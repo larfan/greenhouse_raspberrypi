@@ -503,7 +503,7 @@ class guioflabels:
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
-                        print('While still testing, this should be displayed numerous times')
+                        print('While still testing, this should be displayed numerous times',element[0])
                
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
