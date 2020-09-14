@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(self.now.strftime('%H'))              #self.start=int(datetime.now().strftime('%H'))
+        self.start=5              #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -427,7 +427,7 @@ class guioflabels:
                 '''kinda bodgy but checking if device has been executed enough for the last hour is here
                 ,because in this if clause the hour gets already checked properly'''
 
-                self.start=int(datetime.now().strftime('%H'))
+                self.start=5
 
 
         if argument=='atthetime':
