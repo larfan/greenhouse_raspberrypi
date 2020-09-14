@@ -408,6 +408,7 @@ class guioflabels:
                 self.master.update()
     
     def resetmemory(self,argument,index,element):
+        print('stürzt du doch hier hab?')
         if argument=='realtime':
             if self.startday!=int(datetime.now().strftime('%d')):   #reset day memory
                 self.memory[0][1]=0
