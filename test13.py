@@ -262,13 +262,14 @@ class guioflabels:
             #make temp copy of self.ll
             self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
                                                     #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
-            #modify memory
-            self.resetmemory('realtime',None)      
+                 
                 
             
 
             for idx,element in enumerate(self.li):
                 print(l3)
+                #modify memory
+                self.resetmemory('realtime',None,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it
 
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
@@ -298,7 +299,7 @@ class guioflabels:
                             self.timelog(element,idx,'x/h')                      #register general use of device one time
                             self.memory[idx][3]=datetime.now()              #startingtime always needs to be after timelog, otherwise you measure the wrong way around
                         else:                                               #measurand hasn't got a device to power up
-                            self.resetmemory('atthetime',idx)
+                            self.resetmemory('atthetime',idx,element)
 
                         self.changeconnections(self.l1[9])                  #set to no connection
                         if values.checkintervall(element[0])=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
@@ -317,7 +318,7 @@ class guioflabels:
                             if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
                                 print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
                                 #set device time of powered up device to 0
-                                self.resetmemory('atthetime',idx)
+                                self.resetmemory('atthetime',idx,element)
                                 #set to no connection
                                 self.changeconnections(self.l1[9])
                                 #turning off used device
@@ -332,7 +333,7 @@ class guioflabels:
                     
                     print(self.memory[idx],'\n')
                     #set device time of powered up device to 0
-                    self.resetmemory('atthetime',idx)
+                    self.resetmemory('atthetime',idx,element)
 
 
                     #set to no connection
@@ -407,7 +408,7 @@ class guioflabels:
                 widget.config(text=connect)
                 self.master.update()
     
-    def resetmemory(self,argument,index):
+    def resetmemory(self,argument,index,element):
         if argument=='realtime':
             if self.startday!=int(datetime.now().strftime('%d')):   #reset day memory
                 self.memory[0][1]=0
@@ -419,6 +420,7 @@ class guioflabels:
             
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
+                self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
                 self.memory[0][0]=0
                 self.memory[1][0]=0
                 self.memory[2][0]=0
@@ -503,7 +505,7 @@ class guioflabels:
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
-                        print('This device gets turned on, because the minimum required ontime has not ben reached last hour!')
+                        print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
                         self.changecolor(self.direction[0],True)                            
