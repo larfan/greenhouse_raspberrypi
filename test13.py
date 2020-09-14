@@ -366,8 +366,8 @@ class guioflabels:
                         self.changecolor(u[1],None)
                 self.master.after(5000)
 
-            file1.write('Start einer neuen Runde um '+datetime.now().strftime("%H:%M:%S")+'\n')
-            print('Das ist l3 nach der Simulation: '+str(l3))
+            file1.write('\nStart einer neuen Runde um '+datetime.now().strftime("%H:%M:%S")+'\n')
+            print('Das ist l3 nach der Simulation: '+str(l3)+'\n')
             file1.write('Das ist l3 nach der Simulation: '+str(l3)+'\n')
         
         
@@ -408,7 +408,6 @@ class guioflabels:
                 self.master.update()
     
     def resetmemory(self,argument,index,element):
-        print('stürzt du doch hier hab?')
         if argument=='realtime':
             if self.startday!=int(datetime.now().strftime('%d')):   #reset day memory
                 self.memory[0][1]=0
@@ -417,13 +416,10 @@ class guioflabels:
                 self.startday=int(datetime.now().strftime('%d'))
 
 
-            print('1stürzt du echt hier ab?')
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
-                print('2stürzt du echt hier ab?')
-
+                file1.write('While at it, also powering hourly devices if needed.\n')
                 self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
-                print('3stürzt du echt hier ab?')
 
                 self.memory[0][0]=0
                 self.memory[1][0]=0
@@ -501,22 +497,17 @@ class guioflabels:
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
         if argument=='time-devices':                #gets executed in resetmemory, because structure for checking hour already exists there
-            print('2.5stürzt du echt hier ab?')           
 
             if element[5] is not None:
-                print('2.5.5stürzt du echt hier ab?')
                 if element[5][4] is not None:       #this ensures the reasoning from above
-                    print('2.5.6stürzt du echt hier ab?')
                     self.totaluses=self.memory[index][0]
-                    print('2.5.7stürzt du echt hier ab?')
                     if element[5][4][2] is not None:
-                        print('2.6stürzt du echt hier ab?')
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
-                    print('2.6.5stürzt du echt hier ab?')
                     if self.totaluses<=element[5][4][0]:
-                        print('2.7stürzt du echt hier ab?')
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
+                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.')
+
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
                         self.changecolor(self.direction[0],True)                            
