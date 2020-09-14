@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(datetime.now().strftime('%H'))              #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))+1              #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -429,7 +429,7 @@ class guioflabels:
                 '''kinda bodgy but checking if device has been executed enough for the last hour is here
                 ,because in this if clause the hour gets already checked properly'''
 
-                self.start=int(datetime.now().strftime('%H'))
+                self.start=int(datetime.now().strftime('%H'))+1
 
       
         if argument=='atthetime':
@@ -507,7 +507,7 @@ class guioflabels:
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
-                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.')
+                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
 
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
