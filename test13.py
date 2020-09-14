@@ -214,7 +214,7 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None,'low']]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[500,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
                     [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[3000,30,1,'high']]],#temperature
@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(datetime.now().strftime('%H'))+1              #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))              #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -429,7 +429,7 @@ class guioflabels:
                 '''kinda bodgy but checking if device has been executed enough for the last hour is here
                 ,because in this if clause the hour gets already checked properly'''
 
-                self.start=int(datetime.now().strftime('%H'))+1
+                self.start=int(datetime.now().strftime('%H'))
 
       
         if argument=='atthetime':
