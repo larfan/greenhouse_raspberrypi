@@ -525,7 +525,8 @@ class guioflabels:
 
                         self.changeconnections(self.l1[9])
                         self.changecolor(self.direction[0],None)            #turn off relay
-
+            else:
+                print('sturzt er dann hier ab?')
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
