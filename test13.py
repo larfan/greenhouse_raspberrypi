@@ -269,8 +269,8 @@ class guioflabels:
             for idx,element in enumerate(self.li):
                 print(l3)
                 #modify memory
-                self.resetmemory('realtime',None,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it
-
+                self.resetmemory('realtime',idx,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it
+                
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
                 #set self.memory[4] as True, to register the use of devices
