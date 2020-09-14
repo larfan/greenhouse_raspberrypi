@@ -369,6 +369,7 @@ class guioflabels:
 
             file1.write('\nStart einer neuen Runde um '+datetime.now().strftime("%H:%M:%S")+'\n')
             print('Das ist l3 nach der Simulation: '+str(l3)+'\n')
+            print('Start einer neuen Runde um ',datetime.now().strftime("%H:%M:%S"))
             file1.write('Das ist l3 nach der Simulation: '+str(l3)+'\n')
         
         
@@ -419,7 +420,6 @@ class guioflabels:
 
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
-                file1.write('While at it, also powering hourly devices if needed.\n')
                 self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
 
                 self.memory[0][0]=0
@@ -518,8 +518,7 @@ class guioflabels:
 
                         self.changeconnections(self.l1[9])
                         self.changecolor(self.direction[0],None)            #turn off relay
-            else:
-                print('sturzt er dann hier ab?')
+           
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
