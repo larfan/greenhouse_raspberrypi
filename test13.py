@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(datetime.now().strftime('%H'))          #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))+1          #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -431,7 +431,7 @@ class guioflabels:
                 self.memory[2][0]=0
                 self.memory[3][0]=0
 
-                self.start=int(datetime.now().strftime('%H'))
+                self.start=int(datetime.now().strftime('%H'))+1
 
       
         if argument=='atthetime':
