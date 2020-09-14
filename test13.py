@@ -268,8 +268,7 @@ class guioflabels:
 
             for idx,element in enumerate(self.li):
                 print(l3)
-                #turn on devices that have'nt been turned on enough the last hour
-                self.checktime(element,idx,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
+                
                 
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
@@ -348,8 +347,11 @@ class guioflabels:
                     if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
-                
-            #modify memory
+            '''    
+            modify memory
+            also turn on devices that have'nt been turned on enough the last hour
+            the device function is called in the resetmemory function, because it needs to be checked before the memory is deleted
+            '''
             self.resetmemory('realtime',idx,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it   
 
 
@@ -421,7 +423,9 @@ class guioflabels:
 
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
-                print('wieso geht das nicht',self.memory[element[0]][0])
+                self.checktime(self.ll[0],0,'time-devices') 
+                self.checktime(self.ll[3],3,'time-devices') 
+
                 self.memory[0][0]=0
                 self.memory[1][0]=0
                 self.memory[2][0]=0
@@ -498,26 +502,25 @@ class guioflabels:
         '''
         if argument=='time-devices':                #self.start lastly gets corrected in resetmemory, which is executed after the for loop calling this function 
 
-            if self.start!=int(datetime.now().strftime('%H')):      #check if program is in new hour
-                if element[5] is not None:
-                    if element[5][4] is not None:       #this ensures the reasoning from above
-                        self.totaluses=self.memory[index][0]
-                        if element[5][4][2] is not None:
-                            self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
-                            print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
-                        if self.totaluses<=element[5][4][0]:
-                            print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
-                            file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
+            if element[5] is not None:
+                if element[5][4] is not None:       #this ensures the reasoning from above
+                    self.totaluses=self.memory[index][0]
+                    if element[5][4][2] is not None:
+                        self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
+                        print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
+                    if self.totaluses<=element[5][4][0]:
+                        print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
+                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
 
-                            self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
+                        self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
-                            self.changecolor(self.direction[0],True)                            
-                            self.changeconnections(self.direction[1])
+                        self.changecolor(self.direction[0],True)                            
+                        self.changeconnections(self.direction[1])
 
-                            self.master.after(1000*element[5][4][1])
+                        self.master.after(1000*element[5][4][1])
 
-                            self.changeconnections(self.l1[9])
-                            self.changecolor(self.direction[0],None)            #turn off relay
+                        self.changeconnections(self.l1[9])
+                        self.changecolor(self.direction[0],None)            #turn off relay
            
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
