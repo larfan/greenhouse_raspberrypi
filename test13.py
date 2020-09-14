@@ -431,6 +431,7 @@ class guioflabels:
 
 
         if argument=='atthetime':
+            print('stürzt du hier hab?')
             self.memory[index][2]=0
             
 
