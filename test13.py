@@ -499,8 +499,8 @@ class guioflabels:
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
         if argument=='time-devices':                #self.start lastly gets corrected in resetmemory, which is executed after the for loop calling this function 
+            print('3stürzt du hier ab')
             if self.start!=int(datetime.now().strftime('%H')):
-                print('3stürzt du hier ab')
                 if element[5] is not None:
                     if element[5][4] is not None:       #this ensures the reasoning from above
                         self.totaluses=self.memory[index][0]
