@@ -212,12 +212,12 @@ class guioflabels:
         #predefining variables for the first run, before measuring
         self.useddevice=None
         
-        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device ]]
+        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None]]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,10,1]]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,10,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -503,7 +503,9 @@ class guioflabels:
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
-                        print('While still testing, this should be displayed numerous times',element[0])
+                        self.direction=element[2][element[5][4][3]]
+                        for i in range(element[5][4][1]):
+                            print('this should be printed ',element[5][4][1],'times')
                
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
