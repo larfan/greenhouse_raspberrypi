@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(datetime.now().strftime('%H'))              #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))+1              #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -421,18 +421,18 @@ class guioflabels:
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
                 self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
-
-                self.memory[0][0]=0
-                self.memory[1][0]=0
-                self.memory[2][0]=0
-                self.memory[3][0]=0
+                if self.memory[element[0]][0] is not None:
+                    print('this should only delete the memory of the first 4',element[0])
+                    self.memory[element[0]][0]=0
+                
                 '''kinda bodgy but checking if device has been executed enough for the last hour is here
                 ,because in this if clause the hour gets already checked properly'''
 
-                self.start=int(datetime.now().strftime('%H'))
+                self.start=int(datetime.now().strftime('%H'))+1   
 
       
         if argument=='atthetime':
+            
             self.memory[index][2]=0
             
 
