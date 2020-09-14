@@ -504,7 +504,9 @@ class guioflabels:
             print('2.5stürzt du echt hier ab?')           
 
             if element[5] is not None:
+                print('2.5.5stürzt du echt hier ab?')
                 if element[5][4] is not None:       #this ensures the reasoning from above
+                    print('2.5.6stürzt du echt hier ab?')
                     self.totaluses=self.memory[index][0]
 
                     if element[5][4][2] is not None:
