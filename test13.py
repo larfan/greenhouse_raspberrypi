@@ -508,7 +508,7 @@ class guioflabels:
                 if element[5][4] is not None:       #this ensures the reasoning from above
                     print('2.5.6stürzt du echt hier ab?')
                     self.totaluses=self.memory[index][0]
-
+                    print('2.5.7stürzt du echt hier ab?')
                     if element[5][4][2] is not None:
                         print('2.6stürzt du echt hier ab?')
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
