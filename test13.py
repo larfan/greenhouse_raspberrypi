@@ -268,8 +268,9 @@ class guioflabels:
 
             for idx,element in enumerate(self.li):
                 print(l3)
-                #modify memory
-                self.resetmemory('realtime',idx,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it
+                #turn on devices that have'nt been turned on enough the last hour
+                self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
+
                 
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
@@ -349,7 +350,8 @@ class guioflabels:
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
                 
-                
+            #modify memory
+            self.resetmemory('realtime',idx,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it   
 
 
             file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
@@ -420,15 +422,11 @@ class guioflabels:
 
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
-                self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
                 print('wieso geht das nicht',self.memory[element[0]][0])
-                if self.memory[element[0]][0] is not None:
-
-                    print('this should only delete the memory of the first 4',element[0])
-                    self.memory[element[0]][0]=0
-                
-                '''kinda bodgy but checking if device has been executed enough for the last hour is here
-                ,because in this if clause the hour gets already checked properly'''
+                self.memory[0][0]=0
+                self.memory[1][0]=0
+                self.memory[2][0]=0
+                self.memory[3][0]=0
 
                 self.start=int(datetime.now().strftime('%H'))+1
 
@@ -499,27 +497,27 @@ class guioflabels:
         should alway be initiated by measurand 'using' the device as the last one in for loop. i.e both co2 and temp use the fan, 
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
-        if argument=='time-devices':                #gets executed in resetmemory, because structure for checking hour already exists there
+        if argument=='time-devices':                #self.start lastly gets corrected in resetmemory, which is executed after the for loop calling this function 
+            if self.start!=int(datetime.now().strftime('%H')):
+                if element[5] is not None:
+                    if element[5][4] is not None:       #this ensures the reasoning from above
+                        self.totaluses=self.memory[index][0]
+                        if element[5][4][2] is not None:
+                            self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
+                            print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
+                        if self.totaluses<=element[5][4][0]:
+                            print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
+                            file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
 
-            if element[5] is not None:
-                if element[5][4] is not None:       #this ensures the reasoning from above
-                    self.totaluses=self.memory[index][0]
-                    if element[5][4][2] is not None:
-                        self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
-                        print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
-                    if self.totaluses<=element[5][4][0]:
-                        print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
-                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
+                            self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
-                        self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
+                            self.changecolor(self.direction[0],True)                            
+                            self.changeconnections(self.direction[1])
 
-                        self.changecolor(self.direction[0],True)                            
-                        self.changeconnections(self.direction[1])
+                            self.master.after(1000*element[5][4][1])
 
-                        self.master.after(1000*element[5][4][1])
-
-                        self.changeconnections(self.l1[9])
-                        self.changecolor(self.direction[0],None)            #turn off relay
+                            self.changeconnections(self.l1[9])
+                            self.changecolor(self.direction[0],None)            #turn off relay
            
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
