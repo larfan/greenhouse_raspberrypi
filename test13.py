@@ -501,14 +501,18 @@ class guioflabels:
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
         if argument=='time-devices':                #gets executed in resetmemory, because structure for checking hour already exists there
+            print('2.5stürzt du echt hier ab?')           
+
             if element[5] is not None:
                 if element[5][4] is not None:       #this ensures the reasoning from above
                     self.totaluses=self.memory[index][0]
 
                     if element[5][4][2] is not None:
+                        print('2.6stürzt du echt hier ab?')
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
+                        print('2.7stürzt du echt hier ab?')
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
