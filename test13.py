@@ -217,7 +217,7 @@ class guioflabels:
         self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,5,1,'high']]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[3000,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=5              #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))              #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -275,9 +275,10 @@ class guioflabels:
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
                 #set self.memory[4] as True, to register the use of devices
                 self.memory[idx][4]=True
-            #checks if device shouldn't be turned on in certain time frame                        
+                #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
+
                 while values.checkintervall(element[0])!=True:
                     
                     self.direction=element[2][values.checkintervall(element[0])]        #long expression just returns high/low dictionary, as to not have millions of loops 
@@ -428,7 +429,7 @@ class guioflabels:
                 '''kinda bodgy but checking if device has been executed enough for the last hour is here
                 ,because in this if clause the hour gets already checked properly'''
 
-                self.start=5
+                self.start=int(datetime.now().strftime('%H'))
 
       
         if argument=='atthetime':
