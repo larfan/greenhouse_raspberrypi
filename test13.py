@@ -269,8 +269,9 @@ class guioflabels:
             for idx,element in enumerate(self.li):
                 print(l3)
                 #turn on devices that have'nt been turned on enough the last hour
+                print('1stürzt du hier ab')
                 self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
-
+                print('2stürzt du hier ab')
                 
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
