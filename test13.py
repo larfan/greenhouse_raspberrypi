@@ -513,6 +513,7 @@ class guioflabels:
                         print('2.6stürzt du echt hier ab?')
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
+                    print('2.6.5stürzt du echt hier ab?')
                     if self.totaluses<=element[5][4][0]:
                         print('2.7stürzt du echt hier ab?')
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
