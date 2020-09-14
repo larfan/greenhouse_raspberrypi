@@ -217,7 +217,7 @@ class guioflabels:
         self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[5,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,10,1,'high']]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[5,5,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
         
         
@@ -503,10 +503,17 @@ class guioflabels:
                         self.totaluses+=self.memory[element[5][4][2]][0]    #add uses of device, when not only used by one measurand
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
-                        self.direction=element[2][element[5][4][3]]
-                        for i in range(element[5][4][1]):
-                            print('this should be printed ',element[5][4][1],'times')
-               
+                        print('This device gets turned on, because the minimum required ontime has not ben reached last hour!')
+                        self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
+
+                        self.changecolor(self.direction[0],True)                            
+                        self.changeconnections(self.direction[1])
+
+                        self.master.after(1000*element[5][4][1])
+
+                        self.changeconnections(self.l1[9])
+                        self.changecolor(self.direction[0],None)            #turn off relay
+
 window=Tk()
 mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
