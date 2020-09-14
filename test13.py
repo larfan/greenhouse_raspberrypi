@@ -500,6 +500,7 @@ class guioflabels:
         '''
         if argument=='time-devices':                #self.start lastly gets corrected in resetmemory, which is executed after the for loop calling this function 
             if self.start!=int(datetime.now().strftime('%H')):
+                print('3stürzt du hier ab')
                 if element[5] is not None:
                     if element[5][4] is not None:       #this ensures the reasoning from above
                         self.totaluses=self.memory[index][0]
