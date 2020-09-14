@@ -430,7 +430,7 @@ class guioflabels:
 
                 self.start=5
 
-
+        print('stürzt du auch hier hab?')
         if argument=='atthetime':
             print('stürzt du hier hab?')
             self.memory[index][2]=0
