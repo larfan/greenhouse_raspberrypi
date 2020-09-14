@@ -347,8 +347,7 @@ class guioflabels:
                     if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
-                #just for testing code
-                self.checktime(element,idx,'time-devices')
+                
                 
 
 
