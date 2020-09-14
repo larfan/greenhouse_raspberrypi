@@ -422,7 +422,7 @@ class guioflabels:
 
 
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
-                file1.write('Reset of hourly memory!\n')
+                file1.write('Reset of hourly memory at: '+datetime.now().strftime("%H:%M:%S")+'!\n')
                 self.checktime(self.ll[0],0,'time-devices') 
                 self.checktime(self.ll[3],3,'time-devices') 
 
