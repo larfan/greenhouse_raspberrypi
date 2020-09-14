@@ -238,7 +238,7 @@ class guioflabels:
 
         #set starting times for memory for 1st run
         self.now=datetime.now()
-        self.start=int(datetime.now().strftime('%H'))+1              #self.start=int(datetime.now().strftime('%H'))
+        self.start=int(datetime.now().strftime('%H'))          #self.start=int(datetime.now().strftime('%H'))
 
         self.startday=int(self.now.strftime('%d'))
         
@@ -269,9 +269,7 @@ class guioflabels:
             for idx,element in enumerate(self.li):
                 print(l3)
                 #turn on devices that have'nt been turned on enough the last hour
-                print('1stürzt du hier ab')
                 self.checktime(element,idx,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
-                print('2stürzt du hier ab')
                 
                 #set hour for the whole time of correcting this device
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
@@ -429,7 +427,7 @@ class guioflabels:
                 self.memory[2][0]=0
                 self.memory[3][0]=0
 
-                self.start=int(datetime.now().strftime('%H'))+1
+                self.start=int(datetime.now().strftime('%H'))
 
       
         if argument=='atthetime':
@@ -499,8 +497,8 @@ class guioflabels:
         temp correction comes after co2 correction, hence the indication of ,[2,10] is only in time dependent list in self.ll in temp and not in co2
         '''
         if argument=='time-devices':                #self.start lastly gets corrected in resetmemory, which is executed after the for loop calling this function 
-            print('3stürzt du hier ab')
-            if self.start!=int(datetime.now().strftime('%H')):
+
+            if self.start!=int(datetime.now().strftime('%H')):      #check if program is in new hour
                 if element[5] is not None:
                     if element[5][4] is not None:       #this ensures the reasoning from above
                         self.totaluses=self.memory[index][0]
