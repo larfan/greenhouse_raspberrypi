@@ -410,7 +410,6 @@ class guioflabels:
     def resetmemory(self,argument,index,element):
         print('stürzt du doch hier hab?')
         if argument=='realtime':
-            print('stürzt du echt hier ab?')
             if self.startday!=int(datetime.now().strftime('%d')):   #reset day memory
                 self.memory[0][1]=0
                 self.memory[1][1]=0
@@ -418,10 +417,14 @@ class guioflabels:
                 self.startday=int(datetime.now().strftime('%d'))
 
 
-            
+            print('1stürzt du echt hier ab?')
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
                 file1.write('Reset of hourly memory!\n')
+                print('2stürzt du echt hier ab?')
+
                 self.checktime(element,index,'time-devices')        #this is here, because it needs to be checked before the memory is deleted
+                print('3stürzt du echt hier ab?')
+
                 self.memory[0][0]=0
                 self.memory[1][0]=0
                 self.memory[2][0]=0
@@ -431,9 +434,8 @@ class guioflabels:
 
                 self.start=5
 
-        print('stürzt du auch hier hab?')
+      
         if argument=='atthetime':
-            print('stürzt du hier hab?')
             self.memory[index][2]=0
             
 
