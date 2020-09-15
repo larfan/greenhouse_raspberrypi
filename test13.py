@@ -21,7 +21,7 @@ class measuring:
                           
 
 
-    def simulation(self,use,measurand,op):       #use= if environment simulation or for simulating input devices
+    def simulation(self,use,measurand,op,element):       #use= if environment simulation or for simulating input devices
         self.ops={'+':operator.add,'-':operator.sub}    #op= + or -
         if use=='simulation':                           #direction =for input devices if higher or lower
                                                         #measurand tells which of list should be specifically altered
@@ -218,13 +218,13 @@ class guioflabels:
         #predefining variables for the first run, before measuring
         self.useddevice=None
         
-        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, skip simulation-correction, time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
+        #index of l3,widget,dictionary:{devices,connection,operator}, intervall, [skip correction,skipt simulated-correction], time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,None,[10,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
-                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,None,[10,None,10,None,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,True,[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,None,[None,None,None,None,[10,30,1,'high']]],#temperature
-                    [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,True,None],                          #humidity
+        self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,[None,None],[10,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
+                    [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,[None,None],[10,None,10,None,None]],           #co2
+                    [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,[True,None],[None,5*3600,None,[0,6],None]],   #lightintensity
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,[None,None],[None,None,None,None,[10,30,1,'high']]],#temperature
+                    [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[None,True],None],                          #humidity
         
         
         ]
@@ -292,12 +292,12 @@ class guioflabels:
 
                     self.changeconnections(self.direction[1])                           #change connection-->point to 'used' devices
 
-                    if element[4]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
+                    if element[4][0]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
                         self.memory[idx][3]=datetime.now()
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
 
-                        values.simulation('',element[0],self.direction[2])  
+                        values.simulation('',element[0],self.direction[2],element)  
 
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
@@ -350,7 +350,7 @@ class guioflabels:
                     self.changecolor(self.useddevice,None)         #Turn off just used device
                     self.useddevice=None                           #Forget last used device
                     
-                    if element[4]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
+                    if element[4][0]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
             '''    
@@ -368,7 +368,7 @@ class guioflabels:
             #simulation
             print('Starting with simulation!')
             for p in range(5):
-                values.simulation('simulation',None,None)
+                values.simulation('simulation',None,None,None)
                 for u in self.ll:
                     if values.checkintervall(u[0],idx)==True:
                         self.changecolor(u[1],True)
