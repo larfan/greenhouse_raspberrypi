@@ -19,5 +19,5 @@ class MCP3008:
 
 time.sleep(5)
 adc=MCP3008()
-value = adc.read( channel = 0 )
+value = adc.read( channel = 7 )
 print("Anliegende Spannung: %.2f" % (value / 1023.0 * 3.3) )
