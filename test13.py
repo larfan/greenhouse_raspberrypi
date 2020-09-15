@@ -334,7 +334,7 @@ class guioflabels:
                                 self.useddevice=None
                                 break
                     
-                    print('memory: ',self.memory[idx])
+                    
                 else:
                     #timelogging
                     self.timelog(element,idx,'normallogging')
