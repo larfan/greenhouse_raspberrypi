@@ -49,7 +49,7 @@ class measuring:
         #if measurand==4 or 3:
         #    self.BMP280()
         self.check=l3[measurand]-l4[measurand]
-        if abs(self.check) >=2:
+        if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
                 return 'low'
             elif self.check >0:                            #>0 measurand too high
