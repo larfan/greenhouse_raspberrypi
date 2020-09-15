@@ -454,7 +454,6 @@ class guioflabels:
                 self.timedelta=self.endingtime-self.memory[index][3]
                 self.seconds=self.timedelta.total_seconds()
                 if argument =='normallogging':             
-                    print('do you enter here')
                     #logs  t/24h
                     if self.memory[index][1] is not None:   #needed to not cause errors if logging this is not required     
                         self.memory[index][1]+=self.seconds
