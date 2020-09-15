@@ -7,9 +7,9 @@ import time, random, operator, copy
 
 
 #starting/ideal values for measuring constants
-l3=[995,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[995,20,20,20,20] 
-intervall=[2,2,2,2,2]
+l3=[990,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[990,20,20,20,20] 
+intervall=[5,2,2,2,2]
 
 #opening file for logging purposes
 file1=open("logfile.txt","a")
@@ -30,7 +30,8 @@ class measuring:
             for ind, decrease in enumerate(l3[:2]):
                 l3[ind]=decrease-1
             '''
-
+            #CO2-concentration simulation
+            l3[1]+=l3[1]-1
             #lightintensity simulation
             l3[2]+=random.uniform(-2,2)
 
