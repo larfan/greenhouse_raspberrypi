@@ -42,7 +42,7 @@ class measuring:
             self.incr=1                             
             l3[measurand]=self.ops[op](l3[measurand],self.incr)
 
-    def checkintervall(self,measurand):
+    def checkintervall(self,measurand,index):
         '''
         Derweil wird in Checkintervall noch nicht neu gemessen, da ja noch keine Gerät installiert sind
         '''
@@ -283,9 +283,9 @@ class guioflabels:
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
 
-                while values.checkintervall(element[0])!=True:
+                while values.checkintervall(element[0],idx)!=True:
                     
-                    self.direction=element[2][values.checkintervall(element[0])]        #long expression just returns high/low dictionary, as to not have millions of loops 
+                    self.direction=element[2][values.checkintervall(element[0],idx)]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.changecolor(element[1],None)                                  #color measurand as None/red           
                     self.changecolor(self.direction[0],True)                            #color devices, both changecolor and changeconnection, have a way of ignoring the argument when its None
 
@@ -307,7 +307,7 @@ class guioflabels:
                             self.resetmemory('atthetime',idx,element)
 
                         self.changeconnections(self.l1[9])                  #set to no connection
-                        if values.checkintervall(element[0])=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
+                        if values.checkintervall(element[0],idx)=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
                             self.changecolor(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
                         break
                     
@@ -369,7 +369,7 @@ class guioflabels:
             for p in range(5):
                 values.simulation('simulation',None,None)
                 for u in self.ll:
-                    if values.checkintervall(u[0])==True:
+                    if values.checkintervall(u[0],idx)==True:
                         self.changecolor(u[1],True)
                     else:
                         self.changecolor(u[1],None)
