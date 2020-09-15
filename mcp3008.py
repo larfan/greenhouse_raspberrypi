@@ -1,5 +1,5 @@
 from spidev import SpiDev
- 
+import time
 class MCP3008:
     def __init__(self, bus = 0, device = 0):
         self.bus, self.device = bus, device
@@ -17,6 +17,7 @@ class MCP3008:
     def close(self):
         self.spi.close()
 
+time.sleep(5)
 adc=MCP3008()
 value = adc.read( channel = 0 )
 print("Anliegende Spannung: %.2f" % (value / 1023.0 * 3.3) )
