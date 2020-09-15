@@ -2,12 +2,13 @@ from tkinter import *
 from devicesrelais import relais, cleanclose
 from BME280_new import readBME280All
 from datetime import datetime
+import MCP3008
 import time, random, operator, copy
 
 
 #starting/ideal values for measuring constants
 l3=[20,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[20,20,20,20,20] 
+l4=[1010,20,20,20,20] 
 intervall=[2,2,2,2,2]
 
 #opening file for logging purposes
@@ -24,15 +25,18 @@ class measuring:
         self.ops={'+':operator.add,'-':operator.sub}    #op= + or -
         if use=='simulation':                           #direction =for input devices if higher or lower
                                                         #measurand tells which of list should be specifically altered
-            #general environment simulation
+            '''leave this here for testing purposes, when sensors aren't connected
+            #general environment simulation  
             for ind, decrease in enumerate(l3[:2]):
                 l3[ind]=decrease-1
-               
+            '''
+
             #lightintensity simulation
             l3[2]+=random.uniform(-2,2)
 
             #no simulation needed anymore
             self.BMP280()
+            self.soilhumidity()
 
         else:
             self.incr=1                             
@@ -52,7 +56,7 @@ class measuring:
                 return 'high'
         else:
             return True
-
+    #sensoren
     def BMP280(self):
         try:
             temperature,pressure,humidity = readBME280All()
@@ -61,7 +65,8 @@ class measuring:
         except OSError:
             print('BMP280 scheint nicht verbunden')
             pass
-
+    def soilhumidity(self):
+        l3[0]=MCP3008.analogue(0)
 
 values=measuring()
 
