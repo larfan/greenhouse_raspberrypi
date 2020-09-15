@@ -239,7 +239,7 @@ class guioflabels:
         self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices]
                     [0,0,0,None,None],
                     [0,0,0,None,None],
-                    [0,None,None,None,None],
+                    [0,None,0,None,None],
                     [None,None,None,None,None],
                     [None,None,None,None,None]
                     ]
@@ -454,6 +454,7 @@ class guioflabels:
                 self.timedelta=self.endingtime-self.memory[index][3]
                 self.seconds=self.timedelta.total_seconds()
                 if argument =='normallogging':             
+                    print('do you enter here')
                     #logs  t/24h
                     if self.memory[index][1] is not None:   #needed to not cause errors if logging this is not required     
                         self.memory[index][1]+=self.seconds
