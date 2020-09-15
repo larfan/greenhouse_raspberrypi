@@ -18,5 +18,5 @@ class MCP3008:
         self.spi.close()
 
 adc=MCP3008()
-value = adc.read( channel = 7 )
+value = adc.read( channel = 100 )
 print("Anliegende Spannung: %.2f" % (value / 1023.0 * 3.3) )
