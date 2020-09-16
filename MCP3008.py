@@ -18,5 +18,7 @@ def analogue(channel):
     # The read_adc function will get the value of the specified channel (0-7).
     return mcp.read_adc(channel)
 
+while True:
 
-
+    analogue(1)
+    time.sleep(5)
