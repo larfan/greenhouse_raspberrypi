@@ -293,14 +293,16 @@ class guioflabels:
                     self.changecolor(self.direction[0],True)                            #color devices, both changecolor and changeconnection, have a way of ignoring the argument when its None
 
                     self.changeconnections(self.direction[1])                           #change connection-->point to 'used' devices
-
+                    print('1stürzt du hier ab')
                     if element[4][0]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
+                        print('2stürzt du hier ab')
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
                         self.memory[idx][3]=datetime.now()
+                        print('3stürzt du hier ab')
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
-
+                        print('4stürzt du hier ab')
                         values.simulation('',element[0],self.direction[2],element)  
-
+                        print('5stürzt du hier ab')
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
@@ -538,4 +540,4 @@ mygui=guioflabels(window)               #this calls the class and sets mygui as 
 
 
 
-window.mainloop()                       #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)
+window.mainloop()                       #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)@ext:spadin.remote-x11-ssh
