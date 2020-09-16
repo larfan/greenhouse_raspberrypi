@@ -7,8 +7,8 @@ import time, random, operator, copy
 
 
 #starting/ideal values for measuring constants
-l3=[1010,20,20,20,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[1010,20,20,20,20] 
+l3=[1010,20,20,40,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[1010,20,20,40,20] 
 intervall=[5,2,2,2,2]
 
 #opening file for logging purposes
