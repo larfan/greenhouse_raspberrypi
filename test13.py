@@ -319,6 +319,8 @@ class guioflabels:
                     #correcting intervall
                     self.master.after(1000)                         
 
+                    print('6stürzt du hier ab')
+
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
                     
@@ -337,23 +339,30 @@ class guioflabels:
                                 break
                     
                     #testing
+                    print('7stürzt du hier ab')
                     print(l3)
+                    print('8stürzt du hier ab')
                 else:
                     #timelogging
                     self.timelog(element,idx,'normallogging')
+                    print('9stürzt du hier ab')
+
                     
                     print(self.memory[idx],'\n')
                     #set device time of powered up device to 0
                     self.resetmemory('atthetime',idx,element)
+                    print('10stürzt du hier ab')
 
 
                     #set to no connection
-                    self.changeconnections(self.l1[9])          
+                    self.changeconnections(self.l1[9])
+                    print('11stürzt du hier ab')          
                 
                     #coloring/turning off devices...
                     self.changecolor(element[1],True)               #color measurand as correct/green
                     self.changecolor(self.useddevice,None)         #Turn off just used device
                     self.useddevice=None                           #Forget last used device
+                    print('12stürzt du hier ab')
                     
                     if element[4][0]==True:                            #turn off measurand devices with no simulation, in case they are in the right intervall
                         self.changecolor(element[2]['high'][0],None)
