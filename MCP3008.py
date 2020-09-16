@@ -20,5 +20,5 @@ def analogue(channel):
 
 while True:
 
-    analogue(1)
+    print(analogue(1))
     time.sleep(5)
