@@ -285,8 +285,7 @@ class guioflabels:
                 #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
-                #for testing creating error
-                raise TypeError("TEST   ")
+                
                 while values.checkintervall(element[0],idx)!=True:
                     
                     self.direction=element[2][values.checkintervall(element[0],idx)]        #long expression just returns high/low dictionary, as to not have millions of loops 
@@ -316,6 +315,8 @@ class guioflabels:
                     #correcting intervall
                     self.master.after(1000)                         
 
+                    #testing
+                    raise SyntaxError
 
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
