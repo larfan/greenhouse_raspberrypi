@@ -54,8 +54,9 @@ class measuring:
         self.check=l3[measurand]-l4[measurand]
         if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
-                if index ==3 and type(element) is list:
+                if index ==3 and type(element) is list:         #very bad way of making heatingelment behave like growlights. in the sense of them running in the bg
                     print('you should only print this statement when measurand is temp and its to low')
+                    element[4][0]=True
                 return 'low'
             elif self.check >0:                            #>0 measurand too high
                 
