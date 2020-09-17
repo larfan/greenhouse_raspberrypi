@@ -386,7 +386,8 @@ class guioflabels:
         
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
-        except:
+        except Exception:                           #apparently Exception is the base class of all exceptions
+            print(traceback.format_exc())
             file1.close()
             cleanclose()
             print('Did you cleanup?')
