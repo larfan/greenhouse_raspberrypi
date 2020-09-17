@@ -307,7 +307,7 @@ class guioflabels:
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
                         values.simulation('',element[0],self.direction[2],element)
                         if idx==3:                                          #turn off heating element, similar to growlight this has to be done once here in while loop and then one time in else down below
-                            self.changecolor(element[3]['high'][0],None)  
+                            self.changecolor(element[3]['low'][0],None)  
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
@@ -365,7 +365,8 @@ class guioflabels:
                         self.changecolor(element[2]['high'][0],None)
                         self.changecolor(element[2]['low'][0],None)
                     if idx==3:                                          #turn off heating element, similar to growlight above
-                            self.changecolor(element[3]['high'][0],None)
+                            self.changecolor(element[3]['low'][0],None)
+                            
 
 
             '''    
