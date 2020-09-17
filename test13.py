@@ -390,12 +390,13 @@ class guioflabels:
         
         
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
-        except Exception:                           #apparently Exception is the base class of all exceptions
-            print(traceback.format_exc())           #seems to print good traceback 
+        except:                           #apparently Exception is the base class of all exceptions
+             
             
             file1.close()
             cleanclose()
             print('Did you cleanup?')
+            print(traceback.format_exc())           #seems to print good traceback
             
 
 
