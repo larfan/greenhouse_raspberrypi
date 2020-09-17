@@ -286,7 +286,7 @@ class guioflabels:
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
                 #for testing creating error
-                raise TypeError("TEST")
+                raise TypeError("TEST   ")
                 while values.checkintervall(element[0],idx)!=True:
                     
                     self.direction=element[2][values.checkintervall(element[0],idx)]        #long expression just returns high/low dictionary, as to not have millions of loops 
@@ -389,6 +389,8 @@ class guioflabels:
             self.master.after(1, self.programloop)  #trick is to call function again, at end of function
         except Exception:                           #apparently Exception is the base class of all exceptions
             print(traceback.format_exc())
+            print('------------------------\n')
+            print(traceback.print_stack())
             file1.close()
             cleanclose()
             print('Did you cleanup?')
