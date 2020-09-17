@@ -3,7 +3,7 @@ from devicesrelais import relais, cleanclose
 from BME280_new import readBME280All
 from datetime import datetime
 import MCP3008
-import time, random, operator, copy
+import time, random, operator, copy, traceback
 
 
 #starting/ideal values for measuring constants
@@ -285,7 +285,8 @@ class guioflabels:
                 #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
-
+                #for testing creating error
+                raise TypeError("TEST")
                 while values.checkintervall(element[0],idx)!=True:
                     
                     self.direction=element[2][values.checkintervall(element[0],idx)]        #long expression just returns high/low dictionary, as to not have millions of loops 
