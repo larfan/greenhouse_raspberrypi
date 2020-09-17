@@ -7,8 +7,8 @@ import time, random, operator, copy, traceback
 
 
 #starting/ideal values for measuring constants
-l3=[1010,20,20,40,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[1010,20,20,40,20] 
+l3=[1010,20,400,40,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[1010,20,400,40,20] 
 intervall=[5,2,2,2,2]
 
 #opening file for logging purposes
@@ -38,6 +38,7 @@ class measuring:
             #no simulation needed anymore
             self.BMP280()
             self.soilhumidity()
+            self.lightintensity()
 
         elif element[4][1] is None:             #way of blocking simulated correction
             self.incr=1                             
@@ -50,6 +51,7 @@ class measuring:
          #no correction-simulation needed anymore
         self.BMP280()
         self.soilhumidity()
+        self.lightintensity()
 
         self.check=l3[measurand]-l4[measurand]
         if abs(self.check) >=intervall[index]:
@@ -70,6 +72,9 @@ class measuring:
             pass
     def soilhumidity(self):
         l3[0]=MCP3008.analogue(0)
+    
+    def lightintensity(self):
+        l3[2]=MCP3008.analogue(1)
 
 values=measuring()
 
