@@ -83,10 +83,8 @@ values=measuring()
 
 
 class guioflabels:
-    def __init__(self,master):          #__init__ erlaubt es beim callen der class, argumente mitzugeben, zb window(unten), als master; diese werden dann dort verarbeitet  
+    def __init__(self):          #__init__ erlaubt es beim callen der class, argumente mitzugeben, zb window(unten), als master; diese werden dann dort verarbeitet  
                                         #__init__ is used to set things up
-                                        #das master ist hier glaube ich einfach, damit man nicht mit global definieren muss
-        self.master=master
        
 
         #predefining variables for the first run, before measuring
@@ -134,8 +132,7 @@ class guioflabels:
     def programloop(self):
         try:  
 
-            self.master.after(5000)
-            
+            time.sleep(5)            
             #make temp copy of self.ll
             self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
                                                     #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
@@ -181,7 +178,7 @@ class guioflabels:
                         break
                     
                     #correcting intervall
-                    self.master.after(1000)                         
+                    time.sleep(1)
 
                     #add small increments of 'normally' used device, basically adds the 1000 ms from above
                     self.timelog(element,idx,'normallogging')
@@ -236,7 +233,7 @@ class guioflabels:
             print('Starting with simulation!')
             for p in range(5):
                 values.simulation('simulation',None,None,None)
-                self.master.after(5000)
+                time.sleep(5)
 
             file1.write('\nStart einer neuen Runde um '+datetime.now().strftime("%H:%M:%S")+'\n')
             print('Das ist l3 nach der Simulation: '+str(l3)+'\n')
@@ -244,7 +241,7 @@ class guioflabels:
             file1.write('Das ist l3 nach der Simulation: '+str(l3)+'\n')
         
         
-            self.master.after(1, self.programloop)  #trick is to call function again, at end of function
+            self.programloop()
         except:                           #apparently Exception is the base class of all exceptions
              
             
@@ -365,15 +362,14 @@ class guioflabels:
 
                         self.relay(self.direction[0],True)                            
 
-                        self.master.after(1000*element[5][4][1])
+                        time.sleep(element[5][4][1])
 
                         self.relay(self.direction[0],None)            #turn off relay
            
-window=Tk()
-mygui=guioflabels(window)               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
+
+mygui=guioflabels()               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
 
 
 
-
-window.mainloop()                       #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)@ext:spadin.remote-x11-ssh
+                      #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)@ext:spadin.remote-x11-ssh
