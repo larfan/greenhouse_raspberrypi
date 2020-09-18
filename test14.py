@@ -7,9 +7,9 @@ import time, random, operator, copy, traceback
 
 
 #starting/ideal values for measuring constants
-l3=[1010,20,800,25,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[1010,20,800,25,20] 
-intervall=[5,2,20,5,2]
+l3=[1010,20,800,30,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[1010,20,800,30,20] 
+intervall=[5,2,20,2,2]
 
 #opening file for logging purposes
 file1=open("logfile.txt","a")
@@ -55,6 +55,7 @@ class measuring:
         #for troubleshooting
         if index==3:
             print(self.check)
+
         if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
                 if index ==3 and type(element) is list:         #very bad way of making heatingelment behave like growlights. in the sense of them running in the bg
