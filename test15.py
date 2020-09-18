@@ -162,51 +162,7 @@ class guioflabels:
                      ]
         
 
-        self.frame1=LabelFrame(master, text='INPUTS')
-        self.frame1.grid(row=0,column=2)
-
-        self.frame2=LabelFrame(master, text='OUTPUTS')
-        self.frame2.grid(row=0,column=0)
-
-        self.frame3=LabelFrame(master, width=1000,text=' ',bd=0)
-        self.frame3.grid(row=0,column=1)
-
-        self.input1=Label(self.frame1,text='waterpump')
-        self.input1.grid()
-
-        self.input2=Label(self.frame1,text='fan')
-        self.input2.grid()
-
-        self.input3=Label(self.frame1, text='growlights')
-        self.input3.grid()
-
-        self.input4=Label(self.frame1, text='heater-element')
-        self.input4.grid()
-
-        self.input5=Label(self.frame1, text='')
-        self.input5.grid()
-
-        self.input6=Label(self.frame1, text='')
-        self.input6.grid()
-
-
-        self.output1=Label(self.frame2, text='soil-humidity')
-        self.output1.grid()
-
-        self.output2=Label(self.frame2, text='CO2-concentration')
-        self.output2.grid()
-
-        self.output3=Label(self.frame2, text='lightintensity')
-        self.output3.grid()
-
-        self.output4=Label(self.frame2, text='temperature')
-        self.output4.grid()
-
-        self.output5=Label(self.frame2, text='humidity')
-        self.output5.grid()
-
-        self.output6=Label(self.frame2, text='time',relief=GROOVE)
-        self.output6.grid()
+        
 
         
       
@@ -238,9 +194,6 @@ class guioflabels:
         
         ]
         self.count=0
-        #list with tkinter objects, otherwise you can't copy them
-        self.l5=[self.input1,self.input2,self.input3,self.input4,self.input5,self.input6,
-                 self.output1,self.output2,self.output3,self.output4,self.output5,self.output6]
         
         #memory for how often devices were used
         self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices]
