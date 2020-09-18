@@ -282,7 +282,7 @@ class guioflabels:
             
 
             for idx,element in enumerate(self.li):
-                print(l3)
+                
                 
                 
                 #set hour for the whole time of correcting this device
@@ -294,7 +294,7 @@ class guioflabels:
                     continue
                 
                 while values.checkintervall(element[0],idx,element)!=True:
-                    
+                    print(l3)
                     self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.changecolor(element[1],None)                                  #color measurand as None/red           
                     self.changecolor(self.direction[0],True)                            #color devices, both changecolor and changeconnection, have a way of ignoring the argument when its None
