@@ -298,7 +298,6 @@ class guioflabels:
                     self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.relay(self.direction[0],True)                            #color devices, both relay and changeconnection, have a way of ignoring the argument when its None
 
-                    self.changeconnections(self.direction[1])                           #change connection-->point to 'used' devices
                     
                     if element[4][0]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
@@ -315,7 +314,6 @@ class guioflabels:
                         else:                                               #measurand hasn't got a device to power up
                             self.resetmemory('atthetime',idx,element)
 
-                        self.changeconnections(self.l1[9])                  #set to no connection
                         if values.checkintervall(element[0],idx,'')=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
                             self.relay(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
                         break
@@ -334,7 +332,6 @@ class guioflabels:
                                 #set device time of powered up device to 0
                                 self.resetmemory('atthetime',idx,element)
                                 #set to no connection
-                                self.changeconnections(self.l1[9])
                                 #turning off used device
                                 self.relay(self.useddevice,None)        
                                 self.useddevice=None
@@ -348,10 +345,6 @@ class guioflabels:
 
                     #set device time of powered up device to 0
                     self.resetmemory('atthetime',idx,element)
-
-
-                    #set to no connection
-                    self.changeconnections(self.l1[9])
                 
                     #turning off devices...
                     self.relay(self.useddevice,None)         #Turn off just used device
@@ -403,18 +396,8 @@ class guioflabels:
     def relay(self, widgidx, bool):          #simply changes bg color  of widg, depending on bool
         if widgidx != None:                       #this guarantees no coloring of unused devices; basically same loop in changeconnections
             relais(widgidx,bool)
-                
-                  
 
-    def changetext(self, widg, tex):          #simply changes bg text  of widg, depending on bool
-        widg.config(text=tex)
-        self.master.update()
-
-    def changeconnections(self,connection):      #function, basically draws requested connection
-        if connection != None:                    #this there in case of no used device
-            for (connect,widget) in zip(connection, self.l2):
-                widget.config(text=connect)
-                self.master.update()
+    
     
     def resetmemory(self,argument,index,element):
         if argument=='realtime':
@@ -519,11 +502,9 @@ class guioflabels:
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
 
                         self.relay(self.direction[0],True)                            
-                        self.changeconnections(self.direction[1])
 
                         self.master.after(1000*element[5][4][1])
 
-                        self.changeconnections(self.l1[9])
                         self.relay(self.direction[0],None)            #turn off relay
            
 window=Tk()
