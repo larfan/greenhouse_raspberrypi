@@ -7,8 +7,8 @@ import time, random, operator, copy, traceback
 
 
 #starting/ideal values for measuring constants
-l3=[1010,20,800,30,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[1010,20,800,30,20] 
+l3=[1010,20,800,25,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[1010,20,800,25,20] 
 intervall=[5,2,20,2,2]
 
 #opening file for logging purposes
@@ -232,7 +232,7 @@ class guioflabels:
         self.ll=[[0,6,{'high':[1,self.l1[7],'-'],'low':[0,self.l1[3],'+']},2,[None,True],[10,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,self.l1[4],'+']},2,[None,None],[10,None,10,None,None]],           #co2
                     [2,8,{'high':[None,None,'-'],'low':[2,self.l1[5],'+']},2,[True,True],[None,5*3600,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,[None,True],[None,None,10,None,[10,30,1,'high']]],#temperature
+                    [3,9,{'high':[1,self.l1[8],'-'],'low':[3,self.l1[6],'+']},2,[None,True],[None,None,30,None,[10,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[True,True],None],                          #humidity
         
         
