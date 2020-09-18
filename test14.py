@@ -31,9 +31,9 @@ class measuring:
                 l3[ind]=decrease-1
             '''
             #CO2-concentration simulation
-            l3[1]=l3[1]-1
+            #l3[1]=l3[1]-1
             #lightintensity simulation
-            l3[2]+=random.uniform(-2,2)
+            #l3[2]+=random.uniform(-2,2)
 
             #no simulation needed anymore
             self.BMP280()
