@@ -52,6 +52,9 @@ class measuring:
         self.lightintensity()
 
         self.check=l3[measurand]-l4[measurand]
+        #for troubleshooting
+        if index==3:
+            print(self.check)
         if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
                 if index ==3 and type(element) is list:         #very bad way of making heatingelment behave like growlights. in the sense of them running in the bg
