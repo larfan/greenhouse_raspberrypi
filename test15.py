@@ -167,14 +167,7 @@ class guioflabels:
         
       
 
-        
-
-
-        self.l2=[]                              #man sollte eher listen erstellen, als indirekt 'Daten' in den Variablen zu speichern
-        for i,z in enumerate(self.l1[0],0):     #das waere in diesem Fall self.st1, self.st2, self.st3 usw., wobei 3 eine Art von Daten waere
-                                                #this loop creates all tkinter connection labels
-            self.l2.append(Label(self.frame3,text=z,width=10))
-            self.l2[i].grid()   
+      
       
         
 
