@@ -52,14 +52,10 @@ class measuring:
         self.lightintensity()
 
         self.check=l3[measurand]-l4[measurand]
-        #for troubleshooting
-        if index==3:
-            print(self.check)
-
+    
         if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
                 if index ==3 and type(element) is list:         #very bad way of making heatingelment behave like growlights. in the sense of them running in the bg
-                    print('you should only print this statement when measurand is temp and its to low')
                     element[4][0]=True
                 return 'low'
             elif self.check >0:                            #>0 measurand too high
@@ -351,8 +347,6 @@ class guioflabels:
                     #timelogging
                     self.timelog(element,idx,'normallogging')
 
-                    
-                    print(self.memory[idx],'\n')
                     #set device time of powered up device to 0
                     self.resetmemory('atthetime',idx,element)
 
@@ -384,7 +378,7 @@ class guioflabels:
             file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
             file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory)+'\n')
                     
-
+            print('MEMORY:',self.memory,'\n')
             #simulation
             print('Starting with simulation!')
             for p in range(5):
