@@ -92,9 +92,9 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, [skip correction,skipt simulated-correction], time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[10,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
+        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[10,None,10,[18,6],[10,10,None,'low']]],         #soilhumidity
                     [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[10,None,10,None,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[0,6],None]],   #lightintensity
+                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[18,6],None]],   #lightintensity
                     [3,9,{'high':[1,False,'-'],'low':[3,False,'+']},2,[None,True],[None,None,30,None,[10,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[True,True],None],                          #humidity
         
@@ -155,7 +155,10 @@ class guioflabels:
 
                 for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
                     #just for testing
+                    print(values.checkintervall(element[0],idx,element))
+                    time.sleep(10)
                     print(element[0],': ',self.data)
+                    time
 
                     print(l3)
                     ###du willst hier was einbauen dass bei True kein error vorkommt
