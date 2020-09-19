@@ -155,7 +155,7 @@ class guioflabels:
 
                 for data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
                     print(l3)
-                    wit ###du willst hier was einbauen dass bei True kein error vorkommt
+                    ###du willst hier was einbauen dass bei True kein error vorkommt
                     self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.relay(self.direction[0],True)                            #color devices, both relay and changeconnection, have a way of ignoring the argument when its None
 
