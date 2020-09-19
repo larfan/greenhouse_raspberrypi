@@ -153,7 +153,10 @@ class guioflabels:
                     continue
 
 
-                for data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
+                for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
+                    #just for testing
+                    print(element[0],': ',self.data)
+
                     print(l3)
                     ###du willst hier was einbauen dass bei True kein error vorkommt
                     self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
