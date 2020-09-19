@@ -153,7 +153,7 @@ class guioflabels:
                     continue
 
 
-                for data in self.onecheckintervallinstance():           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
+                for data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
                     print(l3)
                     wit ###du willst hier was einbauen dass bei True kein error vorkommt
                     self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
@@ -253,12 +253,12 @@ class guioflabels:
             print(traceback.format_exc())           #seems to print good traceback
             
 
-    def onecheckintervallinstance(self):        #this function is called a generator
+    def onecheckintervallinstance(self,element,index):        #this function is called a generator
         while True:                             #python 3.8 offers := feature, this block of code isn't required anymore
-            data=values.checkintervall(element[0],idx,element)      #https://stackoverflow.com/questions/19767891/python-assign-value-to-variable-during-condition-in-while-loop/19767980
-            if date == True:
+            self.data=values.checkintervall(element[0],index,element)      #https://stackoverflow.com/questions/19767891/python-assign-value-to-variable-during-condition-in-while-loop/19767980
+            if self.data == True:
                 break
-            yield data
+            yield self.data
 
 
     def relay(self, widgidx, bool):          #simply changes bg color  of widg, depending on bool
