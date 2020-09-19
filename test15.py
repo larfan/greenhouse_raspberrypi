@@ -256,7 +256,7 @@ class guioflabels:
     def onecheckintervallinstance(self):        #this function is called a generator
         while True:                             #python 3.8 offers := feature, this block of code isn't required anymore
             data=values.checkintervall(element[0],idx,element)      #https://stackoverflow.com/questions/19767891/python-assign-value-to-variable-during-condition-in-while-loop/19767980
-            if date == True
+            if date == True:
                 break
             yield data
 
