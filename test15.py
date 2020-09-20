@@ -155,14 +155,12 @@ class guioflabels:
 
                 for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop,necessary to get stable a variable of condition 
                     #just for testing
-                    print(values.checkintervall(element[0],idx,element))
-                    time.sleep(10)
-                    print(element[0],': ',self.data)
-                    time
+                    
+                    
 
                     print(l3)
                     ###du willst hier was einbauen dass bei True kein error vorkommt
-                    self.direction=element[2][values.checkintervall(element[0],idx,element)]        #long expression just returns high/low dictionary, as to not have millions of loops 
+                    self.direction=element[2][self.data]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.relay(self.direction[0],True)                            #color devices, both relay and changeconnection, have a way of ignoring the argument when its None
 
                     
@@ -181,7 +179,7 @@ class guioflabels:
                         else:                                               #measurand hasn't got a device to power up
                             self.resetmemory('atthetime',idx,element)
 
-                        if values.checkintervall(element[0],idx,'')=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
+                        if self.data=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
                             self.relay(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
                         break
                     
