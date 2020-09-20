@@ -3,7 +3,7 @@ from devicesrelais import relais, cleanclose
 from BME280_new import readBME280All
 from datetime import datetime
 import MCP3008
-import time, random, operator, copy, traceback
+import time, random, operator, copy, traceback, xlsxwriter
 
 
 #starting/ideal values for measuring constants
@@ -14,6 +14,29 @@ intervall=[5,2,20,1,2]
 #opening file for logging purposes
 file1=open("logfile.txt","a")
 file1.write('\n\n\nCOMPLETE NEW START\n')
+
+class xlsx:
+    def __init__(self):
+        workbook=xlsxwriter.Workbook('/home/larfan/Documents/PythonProgramming/graphicalinterface/xlsxfile/testxlsx1.xlsx')
+        self.worksheet = workbook.add_worksheet('greenhouse_\"DB\"') 
+
+        # Add a bold format to use to highlight cells.
+        self.bold = workbook.add_format({'bold': True})
+        self.deviceheader=['timestamp','device','duration','reason','aimed at value','reason for poweroff']
+        self.devices=['pump','fan','growlights','heater_element']
+        #make headers
+        self.row = 0
+        self.olumn=0
+        #make the headers
+        for column in enumerate(self.deviceheader):
+            self.worksheet.write(self.row,column,self.deviceheader[column],self.bold)
+            self.olumn+=1
+    def devicestable(self,widgidx):
+        self.row+=1
+        self.worksheet.write(self.row,1,self.devices[widgidx],self.bold)
+
+
+DB=xlsx()
 
 class measuring:
     def __init__(self):
@@ -103,12 +126,12 @@ class guioflabels:
         self.count=0
         
         #memory for how often devices were used
-        self.memory=[[0,0,0,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices]
-                    [0,0,0,None,None],
-                    [0,0,0,None,None],
-                    [0,None,0,None,None],
-                    [None,None,None,None,None],
-                    [None,None,None,None,None]
+        self.memory=[[0,0,0,None,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices,indication if entry in DB(to fill in ending time)]
+                    [0,0,0,None,None,None],
+                    [0,0,0,None,None,None],
+                    [0,None,0,None,None,None],
+                    [None,None,None,None,None,None],
+                    [None,None,None,None,None,None]
                     ]
 
         #set starting times for memory for 1st run
