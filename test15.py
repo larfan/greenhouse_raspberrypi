@@ -153,7 +153,7 @@ class guioflabels:
                     continue
 
 
-                for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop 
+                for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop,necessary to get stable a variable of condition 
                     #just for testing
                     print(values.checkintervall(element[0],idx,element))
                     time.sleep(10)
