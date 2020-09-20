@@ -29,7 +29,7 @@ class xlsx:
         self.olumn=0
         #make the headers
         for column,device in enumerate(self.deviceheader):
-            self.worksheet.write(self.row,column,self.deviceheader[device],self.bold)
+            self.worksheet.write(self.row,column,device,self.bold)
             self.olumn+=1
         #only temporarily here
         workbook.close() 
