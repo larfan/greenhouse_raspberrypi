@@ -17,7 +17,7 @@ file1.write('\n\n\nCOMPLETE NEW START\n')
 
 class xlsx:
     def __init__(self):
-        workbook=xlsxwriter.Workbook('/home/larfan/Documents/PythonProgramming/graphicalinterface/xlsxfile/testxlsx1.xlsx')
+        workbook=xlsxwriter.Workbook('/home/pi/Documents/greenhouse_raspberrypi/xlsxfile/testxlsx1.xlsx')
         self.worksheet = workbook.add_worksheet('greenhouse_\"DB\"') 
 
         # Add a bold format to use to highlight cells.
