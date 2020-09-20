@@ -28,9 +28,11 @@ class xlsx:
         self.row = 0
         self.olumn=0
         #make the headers
-        for column in enumerate(self.deviceheader):
-            self.worksheet.write(self.row,column,self.deviceheader[column],self.bold)
+        for column,device in enumerate(self.deviceheader):
+            self.worksheet.write(self.row,column,self.deviceheader[device],self.bold)
             self.olumn+=1
+        #only temporarily here
+        workbook.close() 
     def devicestable(self,widgidx):
         self.row+=1
         self.worksheet.write(self.row,1,self.devices[widgidx],self.bold)
