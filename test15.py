@@ -17,11 +17,12 @@ file1.write('\n\n\nCOMPLETE NEW START\n')
 
 class xlsx:
     def __init__(self):
-        workbook=xlsxwriter.Workbook('/home/pi/Documents/forkedgitrepo/greenhouse_raspberrypi/xlsxfile/testxlsx1.xlsx')
-        self.worksheet = workbook.add_worksheet('greenhouse_\"DB\"') 
+        print('do you even go here')
+        self.workbook=xlsxwriter.Workbook('/home/pi/Documents/greenhouse_raspberrypi/xlsxfile/testxlsx1.xlsx')
+        self.worksheet = self.workbook.add_worksheet('greenhouse_\"DB\"') 
 
         # Add a bold format to use to highlight cells.
-        self.bold = workbook.add_format({'bold': True})
+        self.bold = self.workbook.add_format({'bold': True})
         self.deviceheader=['timestamp','device','duration','reason','aimed at value','reason for poweroff']
         self.devices=['pump','fan','growlights','heater_element']
         #make headers
@@ -31,12 +32,30 @@ class xlsx:
         for column,device in enumerate(self.deviceheader):
             self.worksheet.write(self.row,column,device,self.bold)
             self.olumn+=1
-        #only temporarily here.
-        workbook.close() 
-    def devicestable(self,widgidx):
-        self.row+=1
-        self.worksheet.write(self.row,1,self.devices[widgidx],self.bold)
+        self.worksheet.write(1,0,datetime.now().strftime("%d/%m, %H:%M:%S"))
+        #
+    def devicestable(self,widgidx,direction,reason,reasonforpoweroff,useddevice):
+        if direction !=None:
+            
+            if mygui.memory[widgidx][5]==True:
+                self.row+=1
+                self.startingtime=datetime.now()
+                self.worksheet.write(self.row,0,datetime.now().strftime("%d/%m, %H:%M:%S"))
+                self.worksheet.write(self.row,1,self.devices[direction])
+                self.worksheet.write(self.row,3,reason)
+                self.worksheet.write(self.row,4,l4[widgidx])
+                #test
+                self.worksheet.write(self.row,5,reasonforpoweroff)
+                mygui.memory[widgidx][5]=None
+                #only temporarily here.
+            elif useddevice is None:
+                print('do you even go in here')
+                self.timedifference=datetime.now()-self.startingtime
+                self.totalseconds=self.timedifference.total_seconds()
 
+                self.worksheet.write(self.row,2,self.totalseconds)
+                #self.worksheet.write(self.row,5,reasonforpoweroff)
+        
 
 DB=xlsx()
 
@@ -56,7 +75,7 @@ class measuring:
                 l3[ind]=decrease-1
             '''
             #CO2-concentration simulation
-            #l3[1]=l3[1]-1
+            l3[1]=l3[1]-1
             #lightintensity simulation
             #l3[2]+=random.uniform(-2,2)
 
@@ -151,7 +170,7 @@ class guioflabels:
         
         
         
-        self.programloop()              #call function 'automatically' here
+        
     
             
     def programloop(self):
@@ -173,21 +192,20 @@ class guioflabels:
                 self.hour=int(datetime.now().strftime('%H'))       #get string with current hour
                 #set self.memory[4] as True, to register the use of devices
                 self.memory[idx][4]=True
+                #set self.memory[idx][5] as True, to register use of device for ecxcel counting
+                self.memory[idx][5]=True
                 #checks if device shouldn't be turned on in certain time frame                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
 
 
-                for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop,necessary to get stable a variable of condition 
-                    #just for testing
+                for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop,necessary to get stable a variable of condition                  
                     
-                    
-
                     print(l3)
-                    ###du willst hier was einbauen dass bei True kein error vorkommt
                     self.direction=element[2][self.data]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.relay(self.direction[0],True)                            #color devices, both relay and changeconnection, have a way of ignoring the argument when its None
-
+                    #write to excel file
+                    DB.devicestable(idx,self.direction[0],'measurand '+str(self.data),'test',None)
                     
                     if element[4][0]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
@@ -223,13 +241,18 @@ class guioflabels:
                                 self.resetmemory('atthetime',idx,element)
                                 #set to no connection
                                 #turning off used device
-                                self.relay(self.useddevice,None)        
+                                self.relay(self.useddevice,None)
+                                #write duration and reason for poweroff into xlsx file
+                                DB.devicestable(None,None,None,'athetime exceeded',self.useddevice)        
                                 self.useddevice=None
+                                
                                 break
                     
                     #testing
                     print(l3)
                 else:
+                    #write duration and reason for poweroff into xlsx file
+                    DB.devicestable(None,None,None,'measurand corrected',self.useddevice)  
                     #timelogging
                     self.timelog(element,idx,'normallogging')
 
@@ -279,6 +302,7 @@ class guioflabels:
             file1.close()
             cleanclose()
             print('Did you cleanup?')
+            DB.workbook.close()
             print(traceback.format_exc())           #seems to print good traceback
             
 
@@ -407,7 +431,7 @@ class guioflabels:
 
 mygui=guioflabels()               #this calls the class and sets mygui as instance; in class refered to instance with self; in o words self is mygui in this case        
 
-
+mygui.programloop()
 
 
                       #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)@ext:spadin.remote-x11-ssh
