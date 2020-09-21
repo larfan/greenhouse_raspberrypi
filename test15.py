@@ -31,7 +31,7 @@ class xlsx:
         for column,device in enumerate(self.deviceheader):
             self.worksheet.write(self.row,column,device,self.bold)
             self.olumn+=1
-        #only temporarily here
+        #only temporarily here.
         workbook.close() 
     def devicestable(self,widgidx):
         self.row+=1
