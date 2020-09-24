@@ -3,13 +3,13 @@ from devicesrelais import relais, cleanclose
 from BME280_new import readBME280All
 from datetime import datetime
 import MCP3008
-import time, random, operator, copy, traceback, xlsxwriter
+import time, random, operator, copy, traceback, xlsxwriter, itertools
 
 
 #starting/ideal values for measuring constants
 l3=[1010,20,350,24,20]        #soilhumidity, co2, lightintensity, temp, humidity
 l4=[1010,20,350,24,20] 
-intervall=[5,2,20,1,2]
+intervall=[5,2,50,1,2]
 
 #opening file for logging purposes
 file1=open("logfile.txt","a")
@@ -17,44 +17,66 @@ file1.write('\n\n\nCOMPLETE NEW START\n')
 
 class xlsx:
     def __init__(self):
-        print('do you even go here')
+        
         self.workbook=xlsxwriter.Workbook('/home/pi/Documents/greenhouse_raspberrypi/xlsxfile/testxlsx1.xlsx')
         self.worksheet = self.workbook.add_worksheet('greenhouse_\"DB\"') 
 
         # Add a bold format to use to highlight cells.
+        
         self.bold = self.workbook.add_format({'bold': True})
-        self.deviceheader=['timestamp','device','duration','reason','aimed at value','reason for poweroff']
+        #devices
+        self.deviceheader=['timestamp','device','duration','reason','values','aimed at value','reason for poweroff']
         self.devices=['pump','fan','growlights','heater_element']
+        self.measurandnames=['soilhumidity', 'co2', 'lightintensity', 'temp', 'humidity']
+
+        #special messages
+        self.messagesheader=['timestamp','measurand','message']
+
         #make headers
         self.row = 0
         self.olumn=0
+        self.rowmessages=1
         #make the headers
-        for column,device in enumerate(self.deviceheader):
+        for column,(device,messages) in enumerate(itertools.zip_longest(self.deviceheader,self.messagesheader)):
             self.worksheet.write(self.row,column,device,self.bold)
+            self.worksheet.write(self.row,column+8,messages,self.bold)
             self.olumn+=1
-        self.worksheet.write(1,0,datetime.now().strftime("%d/%m, %H:%M:%S"))
-        #
-    def devicestable(self,widgidx,direction,reason,reasonforpoweroff,useddevice):
-        if direction !=None:
+        
+        
+    def devicestable(self,widgidx,device,reason,reasonforpoweroff,element):
+        if device !=None:
             
-            if mygui.memory[widgidx][5]==True:
+            if mygui.memory[widgidx][5]==True:          #first time entering this
                 self.row+=1
-                self.startingtime=datetime.now()
+                self.xlsxstartingtime=datetime.now()
+                self.valuesstart=l3[widgidx]
                 self.worksheet.write(self.row,0,datetime.now().strftime("%d/%m, %H:%M:%S"))
-                self.worksheet.write(self.row,1,self.devices[direction])
-                self.worksheet.write(self.row,3,reason)
-                self.worksheet.write(self.row,4,l4[widgidx])
-                #test
-                self.worksheet.write(self.row,5,reasonforpoweroff)
+                self.worksheet.write(self.row,1,self.devices[device])
+                self.worksheet.write(self.row,3,self.measurandnames[element[0]]+' '+str(reason))
+                self.worksheet.write(self.row,5,l4[widgidx])
+                
                 mygui.memory[widgidx][5]=None
                 #only temporarily here.
-            elif useddevice is None:
-                print('do you even go in here')
-                self.timedifference=datetime.now()-self.startingtime
-                self.totalseconds=self.timedifference.total_seconds()
+            else:                                   #this is entered once per for (while True) loop.
+                if self.xlsxstartingtime is not None:       #decide totalseconds value & valuechange in this clause
+                    self.timedifference=datetime.now()-self.xlsxstartingtime
+                    self.totalseconds=self.timedifference.total_seconds()
 
+                    self.valuesend=l3[widgidx]
+                    self.worksheet.write(self.row,4,str(self.valuesstart)+'=>'+str(self.valuesend))
+                else:
+                    self.totalseconds='running in BG'
+
+                    self.worksheet.write(self.row,4,str(self.valuesstart)+'/')
+                #write to worksheet
                 self.worksheet.write(self.row,2,self.totalseconds)
-                #self.worksheet.write(self.row,5,reasonforpoweroff)
+                self.worksheet.write(self.row,6,reasonforpoweroff)
+    def specialmessages(self,widgidx,message):
+        
+        self.worksheet.write(self.rowmessages,8,datetime.now().strftime("%d/%m, %H:%M:%S"))
+        self.worksheet.write(self.rowmessages,9,self.measurandnames[widgidx])
+        self.worksheet.write(self.rowmessages,10,message)
+        self.rowmessages+=1
         
 
 DB=xlsx()
@@ -136,9 +158,9 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, [skip correction,skipt simulated-correction], time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
         #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[10,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
-                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[10,None,10,None,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[0,6],None]],   #lightintensity
+        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[5,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
+                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[5,None,10,None,None]],           #co2
+                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,100,None,[0,6],None]],   #lightintensity
                     [3,9,{'high':[1,False,'-'],'low':[3,False,'+']},2,[None,True],[None,None,30,None,[10,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[True,True],None],                          #humidity
         
@@ -181,11 +203,7 @@ class guioflabels:
             self.li=copy.deepcopy(self.ll)          #deepcopy kann eigentlich keine tkinter objects kopieren, deshalb sind in der self.ll liste nur indexe fuer die self.l5 liste, die die objekte enthaelt
                                                     #honestly I don't remember why a copy of self.ll is needed. Seems to work without it, however further investigation needed
                  
-                
-            
-
             for idx,element in enumerate(self.li):
-                
                 
                 
                 #set hour for the whole time of correcting this device
@@ -194,10 +212,9 @@ class guioflabels:
                 self.memory[idx][4]=True
                 #set self.memory[idx][5] as True, to register use of device for ecxcel counting
                 self.memory[idx][5]=True
-                #checks if device shouldn't be turned on in certain time frame                        
+                #checks if device shouldn't be turned on in certain time frame, also turns off devices of measurand if currently in use(e.g light)                        
                 if self.checktime(element,idx,'timeframe')=='continue':
                     continue
-
 
                 for self.data in self.onecheckintervallinstance(element,idx):           #this replaces while values.checkintervall(element[0],idx,element)!=True loop,necessary to get stable a variable of condition                  
                     
@@ -205,7 +222,7 @@ class guioflabels:
                     self.direction=element[2][self.data]        #long expression just returns high/low dictionary, as to not have millions of loops 
                     self.relay(self.direction[0],True)                            #color devices, both relay and changeconnection, have a way of ignoring the argument when its None
                     #write to excel file
-                    DB.devicestable(idx,self.direction[0],'measurand '+str(self.data),'test',None)
+                    DB.devicestable(idx,self.direction[0],self.data,'apparently keyboardinterrupt',element)
                     
                     if element[4][0]==None and self.direction[0]!= None:                 #this guarantees that certain measurands don't get corrected at all, or only partially(like only raising the value)
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
@@ -215,6 +232,7 @@ class guioflabels:
                         if idx==3:                                          #turn off heating element, similar to growlight this has to be done once here in while loop and then one time in else down below
                             self.relay(element[2]['low'][0],None)  
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
+                        self.useddevice=self.direction[0]
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
                             self.timelog(element,idx,'x/h')                      #register general use of device one time
@@ -224,6 +242,11 @@ class guioflabels:
 
                         if self.data=='high':       #turn off low device because measurand is too high, and you can't change it, i.e. lightintensity 
                             self.relay(element[2]['low'][0],None)     #note to self: this is all very convoluted-->Think carefully before changing sth
+                        #xlsx logging
+                        DB.xlsxstartingtime=None           #set startingtime to none, because device is running in bg from here on, so ther cant be any duration at this point, if xlsxstartingtime is none, no duration is written
+                        DB.devicestable(idx,self.useddevice,None,'no poweroff',element)
+                        
+                        self.useddevice=None
                         break
                     
                     #correcting intervall
@@ -236,23 +259,27 @@ class guioflabels:
                     if element[5] is not None:              #only for the time sensitive
                         if self.memory[idx][2] and element[5][2] is not None:               #needed to not cause errors when there is no atthetime function needed for measurand
                             if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
-                                print('The',element[5][2],'seconds of allowed uptime, has been reached here.')
+                                print('The',element[5][2],'seconds of allowed uptime, have been reached here.')
+                                #xlsx filelog
+                                DB.specialmessages(idx,'atthetime exceeded')
+
                                 #set device time of powered up device to 0
                                 self.resetmemory('atthetime',idx,element)
-                                #set to no connection
                                 #turning off used device
                                 self.relay(self.useddevice,None)
-                                #write duration and reason for poweroff into xlsx file
-                                DB.devicestable(None,None,None,'athetime exceeded',self.useddevice)        
-                                self.useddevice=None
                                 
+                                #write duration and reason for poweroff into xlsx file
+                                DB.devicestable(idx,self.useddevice,None,'athetime exceeded',element) 
+
+                                self.useddevice=None
                                 break
                     
                     #testing
                     print(l3)
                 else:
+                    
                     #write duration and reason for poweroff into xlsx file
-                    DB.devicestable(None,None,None,'measurand corrected',self.useddevice)  
+                    DB.devicestable(idx,self.useddevice,None,'measurand corrected',element)  
                     #timelogging
                     self.timelog(element,idx,'normallogging')
 
@@ -374,6 +401,8 @@ class guioflabels:
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][0] is not None:
                     if self.memory[index][0]>=element[5][0]:
+                        #xlsx logfile
+                        DB.specialmessages(index,'x-powerons/h exceeded')
                         print('Limit of',element[5][0],'times powering this device per hour, has been exceeded')
                         file1.write('Limit of '+str(element[5][0])+' times powering this device per hour, has been exceeded!\n')
         
@@ -381,6 +410,7 @@ class guioflabels:
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][1] is not None:
                     if self.memory[index][1]>=element[5][1]:
+                        DB.specialmessages(index,'daily uptime exceeded')
                         print('The ',element[5][1],'seconds, of allowed daily uptime for this device, has been exceeded')
                         file1.write('The '+str(element[5][1])+' seconds, of allowed daily uptime for this device, has been exceeded!\n')
         #checks if device shouldn't be turned on in certain time frame
@@ -391,6 +421,12 @@ class guioflabels:
                             if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
                                 print('Currently in the forbidden hours!')
                                 file1.write('Currently in the forbidden hours!\n')
+                                #write into xlsx filed
+                                DB.specialmessages(index,'timeframe:correction forbidden')
+                                #turn of devices if runnign atm
+                                self.relay(element[2]['high'][0],None)
+                                print('GEHST DU HIER REIN?')
+                                self.relay(element[2]['low'][0],None)
                                 return 'continue'                                        #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
@@ -399,6 +435,12 @@ class guioflabels:
                             if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:       #difference to if in upper if loop is the or instead of and
                                 print('Currently in the forbidden hours!')
                                 file1.write('Currently in the forbidden hours!\n')
+                                #write into xlsx filed
+                                DB.specialmessages(index,'timeframe:correction forbidden')
+                                #turn of devices if runnign atm
+                                self.relay(element[2]['high'][0],None)
+                                print('GEHST DU HIER REIN?')
+                                self.relay(element[2]['low'][0],None)
                                 return 'continue'                                         #jumps to next iteration in for loop
                             else:
                                 print('Measurand is not in the forbidden hours rn.')
@@ -419,8 +461,12 @@ class guioflabels:
                     if self.totaluses<=element[5][4][0]:
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
                         file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
-
+                    
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
+                        #xlsx filelogging
+                        self.memory[index][5]=True              #need to reset use of device here
+                        for i in range(2):                      #exute two times, as to also add poweroff messages
+                            DB.devicestable(index,self.direction[0],'mandated ontime; not used enough last hour','end of forced poweron',element)
 
                         self.relay(self.direction[0],True)                            
 
