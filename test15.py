@@ -1,28 +1,32 @@
-from tkinter import *
 from devicesrelais import relais, cleanclose
 from BME280_new import readBME280All
 from datetime import datetime
 import MCP3008
-import time, random, operator, copy, traceback, xlsxwriter, itertools
+import time, random, operator, copy, traceback, xlsxwriter, itertools, signal, sys
 
 
 #starting/ideal values for measuring constants
-l3=[1010,20,350,24,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[1010,20,350,24,20] 
+l3=[1010,20,850,24,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[1010,20,850,24,20] 
 intervall=[5,2,50,1,2]
 
-#opening file for logging purposes
-file1=open("logfile.txt","a")
-file1.write('\n\n\nCOMPLETE NEW START\n')
+
+#handle terminate signal
+def terminateProcess(test,tes):
+    print ('(SIGTERM) terminating the process')
+    sys.exit()                              #sys.exit() only raises exception, then caught by except statement
 
 class xlsx:
     def __init__(self):
-        
-        self.workbook=xlsxwriter.Workbook('/home/pi/Documents/greenhouse_raspberrypi/xlsxfile/testxlsx1.xlsx')
+        #make file, including datetimestring in filename
+        self.basefilestring='/home/pi/Documents/greenhouse_raspberrypi/xlsxfile/log_.xlsx'
+        self.filedatetimestring=datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        self.filestring=self.basefilestring[:54]+self.filedatetimestring+self.basefilestring[-5:]
+        self.workbook=xlsxwriter.Workbook(self.filestring)
+
         self.worksheet = self.workbook.add_worksheet('greenhouse_\"DB\"') 
 
         # Add a bold format to use to highlight cells.
-        
         self.bold = self.workbook.add_format({'bold': True})
         #devices
         self.deviceheader=['timestamp','device','duration','reason','values','aimed at value','reason for poweroff']
@@ -71,11 +75,13 @@ class xlsx:
                 #write to worksheet
                 self.worksheet.write(self.row,2,self.totalseconds)
                 self.worksheet.write(self.row,6,reasonforpoweroff)
-    def specialmessages(self,widgidx,message):
+    def specialmessages(self,widgidx,message,traceback):
         
         self.worksheet.write(self.rowmessages,8,datetime.now().strftime("%d/%m, %H:%M:%S"))
         self.worksheet.write(self.rowmessages,9,self.measurandnames[widgidx])
         self.worksheet.write(self.rowmessages,10,message)
+        self.worksheet.write(self.rowmessages,11,traceback)
+
         self.rowmessages+=1
         
 
@@ -157,11 +163,11 @@ class guioflabels:
         self.useddevice=None
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, [skip correction,skipt simulated-correction], time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low) ]]
-        #you can inhibit the use of devices, by simply setting the path to None.
-        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[5,None,10,[0,6],[10,10,None,'low']]],         #soilhumidity
-                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[5,None,10,None,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,100,None,[0,6],None]],   #lightintensity
-                    [3,9,{'high':[1,False,'-'],'low':[3,False,'+']},2,[None,True],[None,None,30,None,[10,30,1,'high']]],#temperature
+        #you can inhibit the use of devices, by simply setting the path to None.                                                                                                            (value of n should obviously be under the atthetime max value)
+        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[30,None,10,[22,6],[20,10,None,'low']]],         #soilhumidity
+                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[30,None,20,None,None]],           #co2
+                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[22,6],None]],   #lightintensity
+                    [3,9,{'high':[1,False,'-'],'low':[3,False,'+']},2,[None,True],[None,None,30,None,[20,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[True,True],None],                          #humidity
         
         
@@ -191,8 +197,9 @@ class guioflabels:
             
         
         
-        
-        
+    # register the signals to be caught
+    signal.signal(signal.SIGTERM, terminateProcess)         #this is needed, to enter the except block in the programloop 
+                                                            #also it's in here, because of tkinter; this class basically is 'if __name__ == '__main__':' in other (normal) programs
     
             
     def programloop(self):
@@ -261,7 +268,7 @@ class guioflabels:
                             if self.memory[idx][2]>=element[5][2]:                          #NOTE: Measurands with simulation-correction:None, never need to enter the followinng code, because the devices are intended to run in the background. Checking t/atthetime doesn't make sense for them
                                 print('The',element[5][2],'seconds of allowed uptime, have been reached here.')
                                 #xlsx filelog
-                                DB.specialmessages(idx,'atthetime exceeded')
+                                DB.specialmessages(idx,'atthetime exceeded',None)
 
                                 #set device time of powered up device to 0
                                 self.resetmemory('atthetime',idx,element)
@@ -305,9 +312,6 @@ class guioflabels:
             '''
             self.resetmemory('realtime',idx,element)       #this is here, because it needs acces to the element, to be able to call the checktime function in it   
 
-
-            file1.write('Das ist l3 nach der Correction und vor der Simulation: '+str(l3)+'\n')
-            file1.write('Das ist das gesamte MEMORY nach der Korrektion: '+str(self.memory)+'\n')
                     
             print('MEMORY:',self.memory,'\n')
             #simulation
@@ -316,20 +320,16 @@ class guioflabels:
                 values.simulation('simulation',None,None,None)
                 time.sleep(5)
 
-            file1.write('\nStart einer neuen Runde um '+datetime.now().strftime("%H:%M:%S")+'\n')
+            
             print('Das ist l3 nach der Simulation: '+str(l3)+'\n')
             print('Start einer neuen Runde um ',datetime.now().strftime("%H:%M:%S"))
-            file1.write('Das ist l3 nach der Simulation: '+str(l3)+'\n')
         
         
             self.programloop()
-        except:                           #apparently Exception is the base class of all exceptions
-             
-            
-            file1.close()
-            cleanclose()
-            print('Did you cleanup?')
-            DB.workbook.close()
+        except BaseException as e:                           #apparently BaseException also includes Keyboardinterrupt and all normal Exceptions
+            cleanclose()    
+            DB.specialmessages(idx,type(e).__name__,traceback.format_exc())        #type gives name of Exception
+            DB.workbook.close()                     
             print(traceback.format_exc())           #seems to print good traceback
             
 
@@ -357,7 +357,6 @@ class guioflabels:
 
 
             if self.start!=int(datetime.now().strftime('%H')):      #reset hour memory
-                file1.write('Reset of hourly memory at: '+datetime.now().strftime("%H:%M:%S")+'!\n')
                 self.checktime(self.ll[0],0,'time-devices') 
                 self.checktime(self.ll[3],3,'time-devices') 
 
@@ -402,17 +401,15 @@ class guioflabels:
                 if element[5][0] is not None:
                     if self.memory[index][0]>=element[5][0]:
                         #xlsx logfile
-                        DB.specialmessages(index,'x-powerons/h exceeded')
+                        DB.specialmessages(index,'x-powerons/h exceeded',None)
                         print('Limit of',element[5][0],'times powering this device per hour, has been exceeded')
-                        file1.write('Limit of '+str(element[5][0])+' times powering this device per hour, has been exceeded!\n')
         
         if argument=='t/24h':
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][1] is not None:
                     if self.memory[index][1]>=element[5][1]:
-                        DB.specialmessages(index,'daily uptime exceeded')
+                        DB.specialmessages(index,'daily uptime exceeded',None)
                         print('The ',element[5][1],'seconds, of allowed daily uptime for this device, has been exceeded')
-                        file1.write('The '+str(element[5][1])+' seconds, of allowed daily uptime for this device, has been exceeded!\n')
         #checks if device shouldn't be turned on in certain time frame
         if argument=='timeframe':
             if element[5] is not None:           #checks if measurand correction should be affected by time
@@ -420,9 +417,8 @@ class guioflabels:
                         if element[5][3][0]<element[5][3][1]:
                             if self.hour >=element[5][3][0] and self.hour <= element[5][3][1]:
                                 print('Currently in the forbidden hours!')
-                                file1.write('Currently in the forbidden hours!\n')
                                 #write into xlsx filed
-                                DB.specialmessages(index,'timeframe:correction forbidden')
+                                DB.specialmessages(index,'timeframe:correction forbidden',None)
                                 #turn of devices if runnign atm
                                 self.relay(element[2]['high'][0],None)
                                 print('GEHST DU HIER REIN?')
@@ -434,9 +430,8 @@ class guioflabels:
                         else:
                             if self.hour >=element[5][3][0] or self.hour <= element[5][3][1]:       #difference to if in upper if loop is the or instead of and
                                 print('Currently in the forbidden hours!')
-                                file1.write('Currently in the forbidden hours!\n')
                                 #write into xlsx filed
-                                DB.specialmessages(index,'timeframe:correction forbidden')
+                                DB.specialmessages(index,'timeframe:correction forbidden',None)
                                 #turn of devices if runnign atm
                                 self.relay(element[2]['high'][0],None)
                                 print('GEHST DU HIER REIN?')
@@ -460,7 +455,6 @@ class guioflabels:
                         print('Das sind die kombinierten totaluses von CO2 und temp ',self.totaluses)
                     if self.totaluses<=element[5][4][0]:
                         print('This device gets turned on for ',element[5][4][1], 'seconds, to compensate for the last hour.')
-                        file1.write('Turning on device for '+str(element[5][4][1])+'seconds, to compensate for the last hour.\n')
                     
                         self.direction=element[2][element[5][4][3]]     #select device, based upon specified 'high'/'low'
                         #xlsx filelogging
@@ -480,4 +474,7 @@ mygui=guioflabels()               #this calls the class and sets mygui as instan
 mygui.programloop()
 
 
+                      
+                      
+                      
                       #(https://github.com/Akuli/python-tutorial/blob/master/basics/classes.md)@ext:spadin.remote-x11-ssh
