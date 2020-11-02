@@ -16,13 +16,13 @@ db = mysql.connect(
 cursor = db.cursor()
 
 #starting/ideal values for measuring constants
-l3=[40,20,800,24,20]        #soilhumidity, co2, lightintensity, temp, humidity
-l4=[40,20,800,24,20] 
-intervall=[10,2,50,1,2]
+l3=[420,20,800,24,20]        #soilhumidity, co2, lightintensity, temp, humidity
+l4=[420,20,800,24,20] 
+intervall=[30,2,50,1,2]
 
 
 #handle terminate signal
-def terminateProcess(test,tes):             #apparently this needs to positional aarguments
+def terminateProcess(test,tes):             #apparently this needs two positional aarguments
     
     print ('(SIGTERM) terminating the process')
     sys.exit()                              #sys.exit() only raises exception, then caught by except statement
@@ -105,6 +105,7 @@ excel=xlsx()
 class realDB:
     def __init__(self):
         self.startingdevice=None
+        self.messagesentry=[None,None,None,None]
     def devices(self,pointinprocess,widgidx,device,reason,reasonforpoweroff,element,duration):
         
         if pointinprocess == 'start': 
@@ -118,7 +119,7 @@ class realDB:
                 self.devicesvalues[0]=reason
                 self.devicesvalues[1]=datetime.now()                #DATETIME data type of mariadb, perfectly handles datetime object
                 #values
-                if len(widgidx)>1:                     #this is here, if the poweron of device, is based on more than one measurand. this is the case in time-devices. Try is used because widgidx doesnt always have to items, therefore it should only add a seconds values if a second index exists
+                if len(widgidx)>1:                     #this is here, if the poweron of device, is based on more than one measurand. this is the case in time-devices. len(widgidx)>1 is there to register if the device gets turned on because the combined uses in the last hour of two measurands wasn't enough.(as often is in time-devices, If you haven't got it by now, just see what happens in time-devicesf)
                     if widgidx[1] is not None:
                         self.devicesvalues[3]=str(l3[widgidx[0]])+'-----'+str(l3[widgidx[1]])                                #in time-devices it goes in here, because the display of two measurands in DB entry is wanted
                         self.devicesvalues[5]=str(l4[widgidx[0]])+'&'+str(l4[widgidx[1]])
@@ -132,9 +133,9 @@ class realDB:
 
                 mygui.memory[widgidx[0]][6]=False
             #calling itself to finish the current entry when the used device changes while still in same loop of one measurand
-            if device is not self.startingdevice:       #only real use case is when pump, lets soildhumidity skyrocket
-                DB.devices('end',widgidx,device,reason,reasonforpoweroff,element,duration)
-                mygui.memory[widgidx[0]][6]==True           #set this part of memory to true so that i can enter the start once again
+            if self.startingdevice is not device:       #only real use case is when pump, lets soildhumidity skyrocket
+                DB.devices('end',widgidx,self.startingdevice,reason,'aimed at value overshot, powering on other device',element,duration)
+                mygui.memory[widgidx[0]][6]=True           #set this part of memory to true so that i can enter the start once again
                 DB.devices('start',widgidx,device,reason,reasonforpoweroff,element,duration)
         elif pointinprocess=='end' and mygui.memory[widgidx[0]][6]==False:         #mygui.memory[widgidx][6]==False ensures that(this) 'end' conditional is only entered when start has also be entered    
             #time
@@ -158,9 +159,6 @@ class realDB:
             else:
                 self.devicesvalues[4]=l3[widgidx[0]]
 
-
-
-
             self.devicesvalues[6]=reasonforpoweroff
 
             #make query
@@ -168,8 +166,46 @@ class realDB:
             #execute query with cursor, with variables in self.devicesvalues
             cursor.execute(self.devicesquery, self.devicesvalues)
             db.commit()  
+    def messages(self,index,message,consequences):
+        self.messagesentry=[None,None,None,None]     #reset at beginning of calling
+        if message[:5]=='curre':         #entered when logging violation of time frame
+            if mygui.memory[index][7]==None:            #making sure that its not entered when writing a message isn't wanted, as it possibly is in 'if mygui.memory[index][7]==None:'; Just taking the datetime item of messagesentry, because this needs to be not none in any case, when writing is intended
+                self.messagesentry[0]=datetime.now()
+                self.messagesentry[1]=message
+                self.messagesentry[2]=consequences
+                self.messagesentry[3]=None
+                mygui.memory[index][7]=True         #sets memory values to indicate that it  has been printed already this hour
+            else:
+                print('you go in here')
+                return              #returns none, which should end the function 
+                print('but not in here')
+        elif message[:5]=='Excep':      #entered when logging exception or
+            self.messagesentry[0]=datetime.now()
+            self.messagesentry[1]=message
+            self.messagesentry[2]=consequences
+            self.messagesentry[3]=None
+        elif message[:5]=='atthe' or message[:5]=='x/h p':
+            '''both atthetime and x/h are directly linked to the poweron of a device, therefore the log in the DB
+            displays the index of the respective row in the devicetable. To achieve this the first code block in 
+            the if fetches the last(previous) index in said table. Consequently this messages funciton needs to
+            be called before the 'end' in the devices function. '''
 
+            #get the index of last written row in table of device, to refer to it(when writing it to the value list of query +1 is needed, because the last index is on behind the current device)
+            self.idquery="select IFNULL(MAX(id),0) from " +excel.devices[self.startingdevice] #when db table has just been reset, IFNULL sets the NULL(in pyhton None) to 0, NUll is received because there are no rows yet in table
+            cursor.execute(self.idquery)
+            self.tableindex=cursor.fetchall()
+            
+
+            self.messagesentry[0]=datetime.now()
+            self.messagesentry[1]=message
+            self.messagesentry[2]=consequences
+            self.messagesentry[3]=excel.devices[self.startingdevice]+' '+str(self.tableindex[0][0]+1)
+        
+        self.messagesquery="INSERT INTO messages (timestamp,message,consequences,deviceskey) VALUES (%s, %s,%s,%s)"
+        cursor.execute(self.messagesquery,self.messagesentry)
+        db.commit()
 DB=realDB()
+   
 
 class measuring:
     def __init__(self):
@@ -187,7 +223,7 @@ class measuring:
                 l3[ind]=decrease-1
             '''
             #CO2-concentration simulation
-            l3[1]=l3[1]-1
+            #l3[1]=l3[1]-1          commented out as not to use fan right now, furter explenation above self.ll
             #lightintensity simulation
             #l3[2]+=random.uniform(-2,2)
 
@@ -211,7 +247,8 @@ class measuring:
     
         if abs(self.check) >=intervall[index]:
             if self.check < 0:                           #<0 measruand too low
-                mygui.relay(element[2]['high'][0],None)         #turn of device, used in opposing position, important for measurands like soilhumidity, because while watering the plants the upper limit (i.e. 30+10) might be exceeded, which calls for turning of the pump, before enganging the fan, or continuing in the for loop, if fan isn't specified
+                #this produces 'gereaet aus'
+                mygui.relay(element[2]['high'][0],None)         #turn of device, used in opposing position, important for measurands like soilhumidity, because while watering the plants the upper limit (i.e. 30+10) might be exceeded, which calls for turning off the pump, before enganging the fan, or continuing in the for loop, if fan isn't specified
                 if index ==3 and type(element) is list:         #very bad way of making heatingelment behave like growlights. in the sense of them running in the bg
                     element[4][0]=True
                 return 'low'
@@ -249,9 +286,13 @@ class guioflabels:
         
         #index of l3,widget,dictionary:{devices,connection,operator}, intervall, [skip correction,skipt simulated-correction], time-dependentlist:[x/h,t/24h,t/am stueck,[von-bis nicht],[if less than n times triggered,ontime duration,possible index of measurand that uses same device,which device to use(high/low)]]
         #you can inhibit the use of devices, by simply setting the path to None.                                                                                                            (value of n should obviously be under the atthetime max value)
-        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[30,None,10,[0,6],[20,10,None,'low']]],         #soilhumidity, in 'low' fan(i.e number 1) can be used instead of None
-                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[30,None,20,None,None]],           #co2
-                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[0,6],None]],   #lightintensity
+        '''CO2 CORRECTION CURRENTLY TURNED OFF!!!!!!!!
+            this is done just by disabling the incremental fall of 1 per cycle(just commented out); not using [True,True] instead of [None,None]
+            because this is meant for devices running in BG, like growlights, still would count time and keep fan running in BG
+        '''
+        self.ll=[[0,6,{'high':[1,False,'-'],'low':[0,False,'+']},2,[None,True],[20,None,10,[22,6],[20,10,None,'low']]],         #soilhumidity, in 'low' fan(i.e number 1) can be used instead of None
+                    [1,7,{'high':[None,None,'-'],'low':[1,False,'+']},2,[None,None],[20,None,10,None,None]],           #co2
+                    [2,8,{'high':[None,None,'-'],'low':[2,False,'+']},2,[True,True],[None,5*3600,None,[22,6],None]],   #lightintensity
                     [3,9,{'high':[1,False,'-'],'low':[3,False,'+']},2,[None,True],[None,None,30,None,[20,30,1,'high']]],#temperature
                     [4,10,{'high':[None,None,'-'],'low':[None,None,'+']},2,[True,True],None],                          #humidity
         
@@ -260,12 +301,12 @@ class guioflabels:
         self.count=0
         
         #memory for how often devices were used
-        self.memory=[[0,0,0,None,None,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices,indication if entry in excel(to fill in ending time)]
-                    [0,0,0,None,None,None,None],
-                    [0,0,0,None,None,None,None],
-                    [0,None,0,None,None,None,None],
-                    [None,None,None,None,None,None,None],
-                    [None,None,None,None,None,None,None]
+        self.memory=[[0,0,0,None,None,None,None,None],          #[x/h,t/24h,t/am stueck, startingtime, remember if this was already counted,remember hour for time based devices,indication if entry in excel(to fill in ending time),DB.messages if messages has been sent out this hour]
+                    [0,0,0,None,None,None,None,None],
+                    [0,0,0,None,None,None,None,None],
+                    [0,None,0,None,None,None,None,None],
+                    [None,None,None,None,None,None,None,None],
+                    [None,None,None,None,None,None,None,None]
                     ]
 
         #set starting times for memory for 1st run
@@ -330,17 +371,20 @@ class guioflabels:
                         self.useddevice=self.direction[0]                               #placing the used device variable here, guarantees, only really the last 'used' devices gets marked
                         self.memory[idx][3]=datetime.now()                       
                         self.timelog(element,idx,'x/h')                              #register general use of device one time
-                        values.simulation('',element[0],self.direction[2],element)
+                        values.simulation('',element[0],self.direction[2],element)      #at this point, it only simulates co2 correction
                         #turning off heating element now happens in the onecheckinintervallinstance function, where it sets the opposite device to None.
 
                     else:                                                   #goes into this when the measurand can't be changed in one or even two directions
                         self.useddevice=self.direction[0]
                         self.timelog(element,idx,'normallogging')           #NEEDS to be outside if None, as to also add the running time of light, if lightintenisty now exceeds the upper limit
                         if self.direction[0]!= None:                        #it enters this loop, if it actually got a device to power up, in case of i.e lightintenistity too high, it doesn't
-                            self.timelog(element,idx,'x/h')                      #register general use of device one time
-                            self.memory[idx][3]=datetime.now()              #startingtime always needs to be after timelog, otherwise you measure the wrong way around
                             #write into DB
                             DB.devices('start',[idx],self.useddevice,excel.measurandnames[element[0]]+' '+str(self.data),None,element,None)
+                            '''timelog needs to be in between "start" and "end" of DB.devices because DB.messages is called for logging x/h inside of self.timelog
+                            . DB.messages is the reason why timelog needs to be placed in between here"'''
+                            self.timelog(element,idx,'x/h')                      #register general use of device one time
+                            self.memory[idx][3]=datetime.now()              #startingtime always needs to be after timelog, otherwise you measure the wrong way around
+                            
                             DB.devices('end',[idx],self.useddevice,None,'no poweroff',element,'running in BG')
                         else:                                               #measurand hasn't got a device to power up
                             self.resetmemory('atthetime',idx,element)
@@ -372,10 +416,11 @@ class guioflabels:
                                 self.resetmemory('atthetime',idx,element)
                                 #turning off used device
                                 self.relay(self.useddevice,None)
-                                
+                            
                                 #write duration and reason for poweroff into xlsx file
                                 excel.devicestable(idx,self.useddevice,None,'athetime exceeded',element) 
                                 #actual mysql(mariad DB) entry
+                                DB.messages(idx,'atthetime exceeded','device gets turned off')
                                 DB.devices('end',[idx],self.useddevice,None,'atthetime exceeded',element,None)
                                 self.useddevice=None
                                 break
@@ -429,7 +474,8 @@ class guioflabels:
         except BaseException as e:                           #apparently BaseException also includes Keyboardinterrupt and all normal Exceptions
             cleanclose()    
             excel.specialmessages(idx,type(e).__name__,traceback.format_exc())        #type gives name of Exception
-            excel.workbook.close()                     
+            excel.workbook.close()
+            DB.messages(idx,'Exception: '+traceback.format_exc(),'exit program')      #'Exception: '+type(e).__name__  for only name of exception                
             print(traceback.format_exc())           #seems to print good traceback
             
 
@@ -464,6 +510,9 @@ class guioflabels:
                 self.memory[1][0]=0
                 self.memory[2][0]=0
                 self.memory[3][0]=0
+                #reset 1 hour limit for DB.messages 
+                self.memory[0][7]=None
+                self.memory[2][7]=None
 
                 self.start=int(datetime.now().strftime('%H'))
 
@@ -499,9 +548,12 @@ class guioflabels:
         if argument=='x/h':                     #goes here only 1 time, because when it's called in timelog(argument=x/h) above, self memory[index][4] gets set to None, which means that the use of the device has been counted 
             if element[5] is not None:          #checks if measurand correction should even be affected by time
                 if element[5][0] is not None:
-                    if self.memory[index][0]>=element[5][0]:
+                    if self.memory[index][0]>element[5][0]:
+                        self.difference=self.memory[index][0]-element[5][0]
                         #xlsx logfile
                         excel.specialmessages(index,'x-powerons/h exceeded',None)
+                        #DB logging
+                        DB.messages('something','x/h powerons exceeded by '+str(self.difference),'only logging for now')
                         print('Limit of',element[5][0],'times powering this device per hour, has been exceeded')
         
         if argument=='t/24h':
@@ -519,9 +571,10 @@ class guioflabels:
                                 print('Currently in the forbidden hours!')
                                 #write into xlsx filed
                                 excel.specialmessages(index,'timeframe:correction forbidden',None)
+                                #DB
+                                DB.messages(index,'currently in forbidden hours',excel.measurandnames[index]+' not corrected')
                                 #turn off devices if runnign atm
                                 self.relay(element[2]['high'][0],None)
-                                print('GEHST DU HIER REIN?')
                                 self.relay(element[2]['low'][0],None)
                                 return 'continue'                                        #jumps to next iteration in for loop
                             else:
@@ -532,6 +585,8 @@ class guioflabels:
                                 print('Currently in the forbidden hours!')
                                 #write into xlsx filed
                                 excel.specialmessages(index,'timeframe:correction forbidden',None)
+                                #DB
+                                DB.messages(index,'currently in forbidden hours',excel.measurandnames[index]+' not corrected')
                                 #turn off devices if runnign atm
                                 self.relay(element[2]['high'][0],None)
                                 print('GEHST DU HIER REIN?')
@@ -575,6 +630,8 @@ class guioflabels:
                         time.sleep(element[5][4][1])
 
                         self.relay(self.direction[0],None)            #turn off relay
+                        #get new values
+                        values.checkintervall(element[0],index,element)
 
                         #DB
                         DB.devices('end',[index,self.addindex],self.direction[0],None,'end of forced poweron',element,None)                         #for now: only time DB function is called with additional index
